@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EleViewDialogBase</class>
+ <widget class="QDialog" name="EleViewDialogBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>389</width>
+    <height>215</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Elevation Viewer</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0">
+   <item row="6" column="2">
+    <widget class="QPushButton" name="capturePoint2">
+     <property name="text">
+      <string>Capture</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="lblPoint1">
+     <property name="text">
+      <string>Point 1</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <widget class="QPushButton" name="capturePoint1">
+     <property name="text">
+      <string>Capture</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="lblPoint1_2">
+     <property name="text">
+      <string>Point 2</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QLineEdit" name="point2"/>
+   </item>
+   <item row="5" column="1">
+    <widget class="QLineEdit" name="point1"/>
+   </item>
+   <item row="4" column="1" colspan="2">
+    <widget class="QgsProjectionSelectionWidget" name="cboxElevProj"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="lblElevAttr">
+     <property name="text">
+      <string>Elevation Attribute</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Projection</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="QComboBox" name="cboxElevLayer"/>
+   </item>
+   <item row="7" column="1">
+    <widget class="QPushButton" name="btnShowElevation">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Show Elevation</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="lblElevLayer">
+     <property name="text">
+      <string>Elevation Layer</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="2">
+    <widget class="QComboBox" name="cboxElevAttr"/>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsProjectionSelectionWidget</class>
+   <extends>QWidget</extends>
+   <header>qgsprojectionselectionwidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
