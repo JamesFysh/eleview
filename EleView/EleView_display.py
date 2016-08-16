@@ -14,10 +14,13 @@ from PyQt4.QtGui import (
     QPainterPath, QGraphicsScene, QPen, QBrush
 )
 
-from shapely.geometry import Point
+from shapely.geometry import Point, MultiPoint
 from shapely import wkt
 
 from EleView_dialog_display import EleViewDialogDisp
+
+ZOOM_IN_FACTOR = 1.25
+ZOOM_OUT_FACTOR = 1 / ZOOM_IN_FACTOR
 
 
 def flatten(pts):
@@ -56,12 +59,12 @@ class ElevationDisplay(object):
         # Helper method to set up the elevation-view dialog
         if self.display is None:
             self.display = EleViewDialogDisp()
-            self.display.wheelEvent = self.wheelEvent
+            self.display.wheelEvent = self.wheel_event
         for slider in (self.display.pt1Slider, self.display.pt2Slider):
             QObject.connect(
                 slider,
                 SIGNAL("valueChanged(int)"),
-                partial(self.sliderMoved, slider)
+                partial(self.slider_moved, slider)
             )
 
     def hide(self):
@@ -70,31 +73,24 @@ class ElevationDisplay(object):
             self.display.hide()
         self.display = None
 
-    def wheelEvent(self, event):
+    def wheel_event(self, event):
         if self.display is None:
             return
-
-        # An appropriate zoom-in/zoom-out factor
-        zoomInFactor = 1.25
-        zoomOutFactor = 1 / zoomInFactor
 
         qgv = self.display.eleView
 
         # Save the scene pos
-        oldPos = qgv.mapToScene(event.pos())
+        old_pos = qgv.mapToScene(event.pos())
 
         # Zoom
-        if event.delta() > 0:
-            zoomFactor = zoomInFactor
-        else:
-            zoomFactor = zoomOutFactor
-        qgv.scale(zoomFactor, zoomFactor)
+        zoom_factor = ZOOM_IN_FACTOR if event.delta() > 0 else ZOOM_OUT_FACTOR
+        qgv.scale(zoom_factor, zoom_factor)
 
         # Get the new position
-        newPos = qgv.mapToScene(event.pos())
+        new_pos = qgv.mapToScene(event.pos())
 
         # Move scene to old position
-        delta = newPos - oldPos
+        delta = new_pos - old_pos
         qgv.translate(delta.x(), delta.y())
 
     def extract_elevations(self):
@@ -143,7 +139,7 @@ class ElevationDisplay(object):
 
     def generate_points(self, line, length, feature_map):
         points = []
-        for feat, geom in feature_map.iteritems():
+        for feat, geom in feature_map.items():
             isect_pts = [
                 length * line.project(pt, True)
                 for pt in flatten(line.intersection(geom))
@@ -153,7 +149,7 @@ class ElevationDisplay(object):
                 points.append(QPointF(isect_pt, elevation))
         self.show_elevation(sorted(points, key=lambda p: p.x()))
 
-    def sliderMoved(self, slider, value):
+    def slider_moved(self, slider, value):
         QgsMessageLog.logMessage(
             "{} changed to {}".format(slider, value),
             level=QgsMessageLog.INFO
