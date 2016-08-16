@@ -4,7 +4,8 @@
 # embedding metadata in __init__.py will 
 # is no longer supported since version 2.0.
 
-# This file should be included when you package your plugin.# Mandatory items:
+# This file should be included when you package your plugin.
+# Mandatory items:
 
 [general]
 name=Elevation Viewer
@@ -14,6 +15,10 @@ about=Allows easy extrapolation from a vector elevation layer to determine the e
 version=0.1
 author=James Fysh
 email=james.fysh@gmail.com
+homepage=https://github.com/JamesFysh/eleview/wiki
+tracker=https://github.com/JamesFysh/eleview/issues
+repository=https://github.com/JamesFysh/eleview
+icon=icon.png
 
 # End of mandatory metadata
 
@@ -25,11 +30,7 @@ email=james.fysh@gmail.com
 # Tags are comma separated with spaces allowed
 tags=analysis, vector, elevation
 
-homepage=https://github.com/JamesFysh/eleview/wiki
-tracker=https://github.com/JamesFysh/eleview/issues
-repository=https://github.com/JamesFysh/eleview
 category=Plugins
-icon=icon.png
 # experimental flag
 experimental=True
 
