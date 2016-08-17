@@ -1,89 +1,13 @@
 from functools import partial
 
-from qgis.core import (
-    QgsMessageLog, QgsRectangle, QgsFeatureRequest, QgsGeometry,
-    QgsCoordinateTransform,
-)
 from PyQt4.QtCore import Qt, QPointF, QLineF, QObject, SIGNAL
 from PyQt4.QtGui import QPainterPath, QGraphicsScene, QPen, QBrush
 
-from shapely.geometry import MultiPoint
-from shapely import wkt
-
-from EleView_dialog_display import EleViewDialogDisp
+from .ElevationReader import ElevationReader
+from .EleView_dialog_display import EleViewDialogDisp
 
 ZOOM_IN_FACTOR = 1.25
 ZOOM_OUT_FACTOR = 1 / ZOOM_IN_FACTOR
-
-
-def flatten(pts):
-    if isinstance(pts, MultiPoint):
-        return list(pts.geoms)
-    return [pts]
-
-
-class ElevationReader(object):
-    def __init__(self, pt1, pt2, layer, layer_attr, layer_crs, measure_crs):
-        self.pt1 = pt1
-        self.pt2 = pt2
-        self.layer = layer
-        self.layer_attr = layer_attr
-        self.layer_crs = layer_crs
-        self.measure_crs = measure_crs
-        self.points = None
-
-    def extract_elevations(self):
-        # Construct an MBR in which to look for vectors in the layer
-        rect = QgsRectangle(self.pt1, self.pt2)
-        QgsMessageLog.logMessage(
-            "Getting features in layer {}, intersecting rect {}".format(
-                self.layer.name(),
-                rect.toString()
-            ),
-            level=QgsMessageLog.INFO
-        )
-
-        # Retrieve vectors from the layer that intersect the constructed MBR
-        features = list(
-            self.layer.getFeatures(QgsFeatureRequest(rect))
-        )
-        QgsMessageLog.logMessage(
-            "Got {} features".format(len(features)),
-            level=QgsMessageLog.INFO
-        )
-
-        # Construct a "reprojector" to map from the layer CRS to the CRS that
-        # the user selected.
-        xform = QgsCoordinateTransform(self.layer_crs, self.measure_crs)
-
-        # And generate
-        self.generate_points(
-            wkt.loads(
-                QgsGeometry.fromPolyline([self.pt1, self.pt2]).exportToWkt()
-            ),
-            wkt.loads(
-                QgsGeometry.fromPolyline([
-                    xform.transform(self.pt1),
-                    xform.transform(self.pt2)
-                ]).exportToWkt()
-            ).length,
-            {
-                f: wkt.loads(f.geometry().exportToWkt())
-                for f in features
-            }
-        )
-
-    def generate_points(self, line, length, feature_map):
-        points = []
-        for feat, geom in feature_map.items():
-            isect_pts = [
-                length * line.project(pt, True)
-                for pt in flatten(line.intersection(geom))
-                ]
-            elevation = float(feat.attribute(self.layer_attr))
-            for isect_pt in isect_pts:
-                points.append(QPointF(isect_pt, elevation))
-        self.points = sorted(points, key=lambda p: p.x())
 
 
 class ElevationDisplay(object):
@@ -157,11 +81,6 @@ class ElevationDisplay(object):
         qgv.translate(delta.x(), delta.y())
 
     def slider_moved(self, slider, value):
-        QgsMessageLog.logMessage(
-            "{} changed to {}".format(slider, value),
-            level=QgsMessageLog.INFO
-        )
-        
         # Copy the current line
         line = QLineF(self.line.line())
         
