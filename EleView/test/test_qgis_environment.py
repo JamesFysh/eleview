@@ -8,17 +8,10 @@
      (at your option) any later version.
 
 """
-__author__ = 'tim@linfiniti.com'
-__date__ = '20/01/2011'
-__copyright__ = ('Copyright 2012, Australia Indonesia Facility for '
-                 'Disaster Reduction')
 
-import os
+
 import unittest
-from qgis.core import (
-    QgsProviderRegistry,
-    QgsCoordinateReferenceSystem,
-    QgsRasterLayer)
+from qgis.core import QgsProviderRegistry, QgsCoordinateReferenceSystem
 
 from utilities import get_qgis_app
 QGIS_APP = get_qgis_app()
@@ -29,7 +22,6 @@ class QGISTest(unittest.TestCase):
 
     def test_qgis_environment(self):
         """QGIS environment has the expected providers"""
-
         r = QgsProviderRegistry.instance()
         self.assertIn('gdal', r.providerList())
         self.assertIn('ogr', r.providerList())
@@ -47,13 +39,6 @@ class QGISTest(unittest.TestCase):
         crs.createFromWkt(wkt)
         auth_id = crs.authid()
         expected_auth_id = 'EPSG:4326'
-        self.assertEqual(auth_id, expected_auth_id)
-
-        # now test for a loaded layer
-        path = os.path.join(os.path.dirname(__file__), 'tenbytenraster.asc')
-        title = 'TestRaster'
-        layer = QgsRasterLayer(path, title)
-        auth_id = layer.crs().authid()
         self.assertEqual(auth_id, expected_auth_id)
 
 if __name__ == '__main__':

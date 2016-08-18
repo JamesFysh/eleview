@@ -36,17 +36,21 @@ class ElevationReader(object):
         )
 
         # Retrieve vectors from the layer that intersect the constructed MBR
-        features = list(
-            self.layer.getFeatures(QgsFeatureRequest(rect))
-        )
+        feat_geom_map = {
+            f: f.geometry()
+            for f in self.layer.getFeatures(QgsFeatureRequest(rect))
+        }
         QgsMessageLog.logMessage(
-            "Got {} features".format(len(features)),
+            "Got {} features".format(len(feat_geom_map)),
             level=QgsMessageLog.INFO
         )
 
         # Construct a "reprojector" to map from the layer CRS to the CRS that
         # the user selected.
         xform = QgsCoordinateTransform(self.layer_crs, self.measure_crs)
+        trcrs = xform.transform
+        for g in feat_geom_map.values():
+            g.transform(xform)
 
         # And generate
         self.generate_points(
@@ -55,13 +59,12 @@ class ElevationReader(object):
             ),
             wkt.loads(
                 QgsGeometry.fromPolyline([
-                    xform.transform(self.pt1),
-                    xform.transform(self.pt2)
+                    trcrs(self.pt1), trcrs(self.pt2)
                 ]).exportToWkt()
             ).length,
             {
-                f: wkt.loads(f.geometry().exportToWkt())
-                for f in features
+                f: wkt.loads(g.exportToWkt())
+                for f, g in feat_geom_map.items()
             }
         )
 
@@ -71,7 +74,7 @@ class ElevationReader(object):
             isect_pts = [
                 length * line.project(pt, True)
                 for pt in flatten(line.intersection(geom))
-                ]
+            ]
             elevation = float(feat.attribute(self.layer_attr))
             for isect_pt in isect_pts:
                 points.append(QPointF(isect_pt, elevation))
