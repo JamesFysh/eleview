@@ -7,15 +7,9 @@
      (at your option) any later version.
 
 """
-
-__author__ = 'james.fysh@gmail.com'
-__date__ = '2015-04-05'
-__copyright__ = 'Copyright 2015, -'
-
 import unittest
 
 from PyQt4.QtGui import QIcon
-
 
 
 class EleViewDialogTest(unittest.TestCase):
@@ -34,11 +28,3 @@ class EleViewDialogTest(unittest.TestCase):
         path = ':/plugins/EleView/icon.png'
         icon = QIcon(path)
         self.assertFalse(icon.isNull())
-
-if __name__ == "__main__":
-    suite = unittest.makeSuite(EleViewResourcesTest)
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite)
-
-
-

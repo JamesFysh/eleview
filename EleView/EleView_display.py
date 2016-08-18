@@ -3,6 +3,8 @@ from functools import partial
 from PyQt4.QtCore import Qt, QPointF, QLineF, QObject, SIGNAL
 from PyQt4.QtGui import QPainterPath, QGraphicsScene, QPen, QBrush
 
+from qgis.core import QgsMessageLog
+
 from .ElevationReader import ElevationReader
 from .EleView_dialog_display import EleViewDialogDisp
 
@@ -108,11 +110,31 @@ class ElevationDisplay(object):
         self.configure_display()
 
         # Set up the scene
+        QgsMessageLog.logMessage(
+            "starting at {}".format(points[0]),
+            level=QgsMessageLog.INFO
+        )
         path = QPainterPath(points[0])
         for point in points[1:]:
+            QgsMessageLog.logMessage(
+                "to {}".format(point),
+                level=QgsMessageLog.INFO
+            )
             path.lineTo(point)
+        QgsMessageLog.logMessage(
+            "to {},{}".format(points[-1].x(), 0),
+            level=QgsMessageLog.INFO
+        )
         path.lineTo(points[-1].x(), 0)
+        QgsMessageLog.logMessage(
+            "to {},{}".format(points[0].x(), 0),
+            level=QgsMessageLog.INFO
+        )
         path.lineTo(points[0].x(), 0)
+        QgsMessageLog.logMessage(
+            "to {}".format(points[0]),
+            level=QgsMessageLog.INFO
+        )
         path.lineTo(points[0])
 
         scene = QGraphicsScene(self.display)
