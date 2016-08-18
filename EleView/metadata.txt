@@ -30,13 +30,14 @@ changelog=0.1:
 
     0.2:
     * Corrected labelling on the main dialog
-    * Lots of non-functional code-refactoring
+    * Non-functional code-refactoring
+    * UI improvements on the main dialog
 # Tags are comma separated with spaces allowed
 tags=analysis, vector, elevation
 
 category=Plugins
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
