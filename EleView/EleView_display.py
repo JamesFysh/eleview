@@ -113,7 +113,7 @@ class ElevationDisplay(object):
             path.lineTo(point)
         path.lineTo(points[-1].x(), 0)
         path.lineTo(points[0].x(), 0)
-        path.lineTo(points[0].x(), points[0].y())
+        path.lineTo(points[0])
 
         scene = QGraphicsScene(self.display)
         self.path = scene.addPath(

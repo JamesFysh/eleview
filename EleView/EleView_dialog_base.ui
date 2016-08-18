@@ -6,85 +6,248 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>389</width>
-    <height>215</height>
+    <width>540</width>
+    <height>494</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Elevation Viewer</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0">
-   <item row="5" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Projection</string>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="elevSourceGB">
+     <property name="title">
+      <string>Elevation Source</string>
      </property>
+     <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,1">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
+      <item row="4" column="0">
+       <widget class="QLabel" name="lblElevAttr">
+        <property name="text">
+         <string>Elevation Attribute</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QLabel" name="lblElevDescription">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Select the vector layer that contains features representing elevations, and which attribute on that layer carries the elevation data. It is assumed that the values in that attribute can be interpreted as floating-point values representing elevation in meters.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="lblElevLayer">
+        <property name="text">
+         <string>Elevation Layer</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QComboBox" name="cboxElevAttr"/>
+      </item>
+      <item row="2" column="0">
+       <spacer name="vs">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>5</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="cboxElevLayer"/>
+      </item>
+      <item row="0" column="0">
+       <spacer name="vs_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>5</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="5" column="1" colspan="2">
-    <widget class="QgsProjectionSelectionWidget" name="cboxElevProj"/>
-   </item>
-   <item row="1" column="1" colspan="2">
-    <widget class="QComboBox" name="cboxElevLayer"/>
-   </item>
-   <item row="7" column="2">
-    <widget class="QPushButton" name="capturePoint2">
-     <property name="text">
-      <string>Capture</string>
+   <item>
+    <widget class="QGroupBox" name="elevHandlingGB">
+     <property name="title">
+      <string>Elevation Handling</string>
      </property>
+     <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
+      <item row="0" column="0">
+       <spacer name="vs_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>5</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="1">
+       <widget class="QgsProjectionSelectionWidget" name="cboxElevProj">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="lblProjection">
+        <property name="text">
+         <string>Projection               </string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <spacer name="vs_4">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>5</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QLabel" name="lblHandlingDescription">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Choose an appropriate coordinate-reference system to map feature-geometries into.  The units for the chosen CRS should match the units used to capture the elevation of features in the vector layer chosen above.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="lblPoint1">
-     <property name="text">
-      <string>Point 1</string>
+   <item>
+    <widget class="QGroupBox" name="captureGB">
+     <property name="title">
+      <string>Point Capture</string>
      </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="4" column="0">
+       <widget class="QLabel" name="lblPoint1_2">
+        <property name="text">
+         <string>Point 2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>5</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="2">
+       <widget class="QPushButton" name="capturePoint1">
+        <property name="text">
+         <string>Capture</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QPushButton" name="capturePoint2">
+        <property name="text">
+         <string>Capture</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="point1"/>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="point2"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="lblPoint1">
+        <property name="text">
+         <string>Point 1                    </string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>5</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="0" colspan="3">
+       <widget class="QLabel" name="lblCaptureDescription">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Select two points on the map.  All features in the vector layer that lie between these two points shall contribute to the resulting 2D height-map that the tool produces.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="6" column="2">
-    <widget class="QPushButton" name="capturePoint1">
-     <property name="text">
-      <string>Capture</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="lblPoint1_2">
-     <property name="text">
-      <string>Point 2</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1">
-    <widget class="QLineEdit" name="point2"/>
-   </item>
-   <item row="6" column="1">
-    <widget class="QLineEdit" name="point1"/>
-   </item>
-   <item row="8" column="1">
+   <item>
     <widget class="QPushButton" name="btnShowElevation">
      <property name="enabled">
       <bool>false</bool>
      </property>
      <property name="text">
       <string>Show Elevation</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1" colspan="2">
-    <widget class="QComboBox" name="cboxElevAttr"/>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="lblElevLayer">
-     <property name="text">
-      <string>Elevation Layer</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="lblElevAttr">
-     <property name="text">
-      <string>Elevation Attribute</string>
      </property>
     </widget>
    </item>
