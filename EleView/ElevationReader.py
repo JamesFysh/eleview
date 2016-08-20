@@ -56,6 +56,8 @@ class ElevationReader(object):
     def _generate_points(self, line, length, feature_map):
         points = []
         for feat, geom in feature_map.items():
+            if not geom.intersects(line):
+                continue
             isect_pts = [
                 length * line.project(pt, True)
                 for pt in flatten(line.intersection(geom))
