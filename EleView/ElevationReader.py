@@ -1,7 +1,7 @@
 from PyQt4.QtCore import QPointF
 from qgis.core import (
     QgsMessageLog, QgsRectangle, QgsFeatureRequest, QgsGeometry,
-    QgsCoordinateTransform, QgsPointV2, QgsLineStringV2
+    QgsCoordinateTransform, QgsPoint
 )
 
 from shapely.geometry import LineString, MultiPoint
@@ -63,19 +63,23 @@ class ElevationReader(object):
             elevation = float(feat.attribute(self.layer_attr))
             for isect_pt in isect_pts:
                 points.append(QPointF(isect_pt, elevation))
-        self.points = sorted(points, key=lambda p: p.x())
+        min_px = min(p.x() for p in points)
+        if min_px < 0.:
+            self.points = sorted(
+                [QPointF(p.x() + (-min_px), p.y()) for p in points],
+                key=lambda p: p.x()
+            )
+        else:
+            self.points = sorted(points, key=lambda p: p.x())
 
     def extract_elevations(self):
         feat_geom_map = self._retrieve_features()
         self._transform_coordinates(feat_geom_map.values())
-        xfpt1, xfpt2 = QgsPointV2(self.pt1), QgsPointV2(self.pt2)
-        self._transform_coordinates([xfpt1, xfpt2])
-        line = QgsLineStringV2()
-        line.setPoints([xfpt1, xfpt2])
-        print line.length()
+        xfpt1, xfpt2 = self.xform.transform(QgsPoint(self.pt1)), \
+                       self.xform.transform(QgsPoint(self.pt2))
         self._generate_points(
-            LineString([self.pt1, self.pt2]),
-            line.length(),
+            LineString([xfpt1, xfpt2]),
+            xfpt1.distance(xfpt2),
             {
                 f: wkt.loads(g.exportToWkt())
                 for f, g in feat_geom_map.items()
