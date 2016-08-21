@@ -4,8 +4,18 @@ from qgis.core import (
     QgsCoordinateTransform, QgsPoint
 )
 
-from shapely.geometry import LineString, MultiPoint
+from shapely.geometry import LineString, MultiPoint, MultiLineString, Polygon
 from shapely import wkt
+
+
+def de_polygonize(geometry):
+    if isinstance(geometry, Polygon):
+        coords = geometry.exterior.coords
+        return MultiLineString([
+            LineString([p1, p2])
+            for p1, p2 in zip(coords[0::1], coords[1::1])
+        ])
+    return geometry
 
 
 def flatten(pts):
@@ -82,7 +92,7 @@ class ElevationReader(object):
             LineString([xfpt1, xfpt2]),
             xfpt1.distance(xfpt2),
             {
-                f: wkt.loads(g.exportToWkt())
+                f: de_polygonize(wkt.loads(g.exportToWkt()))
                 for f, g in feat_geom_map.items()
             }
         )
