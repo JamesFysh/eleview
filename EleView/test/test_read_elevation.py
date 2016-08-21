@@ -1,4 +1,5 @@
 import unittest
+from collections import namedtuple
 
 from qgis.core import (
     QgsCoordinateReferenceSystem, QgsVectorLayer, QgsFeature, QgsGeometry,
@@ -123,31 +124,45 @@ STATIC_COORD_DATA = {
     }
 }
 
+FeatureDescr = namedtuple('FeatureDescr', 'geom, elev')
+class LayerMaker(object):
+    def __init__(self, layer_name):
+        self.layer = layer = QgsVectorLayer("LineString", layer_name, 'memory')
+        self.pr = self.layer.dataProvider()
+        self.layer.startEditing()
+        self.pr.addAttributes(
+            [QgsField("elevation", QVariant.Double)]
+        )
+        self.layer.updateFields()
+
+    def add_features(self, feature_descr_list):
+        features = []
+        for fd in feature_descr_list:
+            feature = QgsFeature()
+            feature.setGeometry(fd.geom)
+            feature.setAttributes([fd.elev])
+            features.append(feature)
+        self.pr.addFeatures(features)
+        self.layer.commitChanges()
+
 
 class TestElevationReader(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.layer_crs = QgsCoordinateReferenceSystem()
+        cls.layer_crs.createFromSrid(4326)
+        cls.measure_crs = QgsCoordinateReferenceSystem()
+        cls.measure_crs.createFromSrid(3112)
         cls.test_layers = {}
         for layer_name, test_data in STATIC_COORD_DATA.items():
-            layer = QgsVectorLayer("LineString", layer_name, 'memory')
-            layer.startEditing()
-            cls.test_layers[layer_name] = layer
-            pr = layer.dataProvider()
-            pr.addAttributes(
-                [QgsField("elevation", QVariant.Double)]
+            lm = LayerMaker(layer_name)
+            lm.add_features(
+                [
+                    FeatureDescr(vector, test_data[ELFN](idx))
+                    for idx, vector in enumerate(test_data[ISECT_VECTORS])
+                ]
             )
-            layer.updateFields()
-
-            features = []
-            for idx, vector in enumerate(test_data[ISECT_VECTORS]):
-                feature = QgsFeature()
-                feature.setGeometry(vector)
-                elevation = test_data[ELFN](idx)
-                feature.setAttributes([elevation])
-                features.append(feature)
-            pr.addFeatures(features)
-            layer.commitChanges()
-            layer.updateExtents()
+            cls.test_layers[layer_name] = lm.layer
 
     def test_can_instantiate_reader(self):
         reader = ElevationReader(None, None, None, None, None, None)
@@ -155,21 +170,43 @@ class TestElevationReader(unittest.TestCase):
 
     def test_can_read_elevations(self):
         for name, details in STATIC_COORD_DATA.items():
-            layer_crs = QgsCoordinateReferenceSystem()
-            layer_crs.createFromSrid(4326)
-            measure_crs = QgsCoordinateReferenceSystem()
-            measure_crs.createFromSrid(3112)
             reader = ElevationReader(
                 details[START_PT],
                 details[END_PT],
                 self.test_layers[name],
                 "elevation",
-                layer_crs,
-                measure_crs,
+                self.layer_crs,
+                self.measure_crs,
             )
             reader.extract_elevations()
-            self.assertGreater(len(reader.points), 9, "for {}".format(name))
+            self.assertGreater(len(reader.points), 9)
             for point in reader.points:
                 self.assertTrue(10 < point.y())
                 self.assertTrue(point.y() < 200)
                 self.assertTrue(0 < point.x())
+
+    def test_multi_intersect(self):
+        # Define the two captured points
+        p1, p2 = QgsPoint(20., 10.), QgsPoint(20., 10.2)
+        centroid = QgsGeometry.fromPoint(QgsPoint(20., 10.1))
+
+        # Construct an appropriate layer
+        lm = LayerMaker('test')
+        lm.add_features(
+            [
+                FeatureDescr(
+                    centroid.buffer(radius, 16),
+                    20 + ((.08 - radius) * 200)
+                )
+                for radius in (.01, .02, .03, .04, .05, .06, .07, .08)
+            ]
+        )
+        reader = ElevationReader(
+            p1, p2, lm.layer, "elevation", self.layer_crs, self.measure_crs,
+        )
+        reader.extract_elevations()
+        self.assertEqual(len(reader.points), 16)
+        for point in reader.points:
+            self.assertTrue(10 < point.y())
+            self.assertTrue(point.y() < 200)
+            self.assertTrue(0 < point.x())
