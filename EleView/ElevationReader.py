@@ -58,13 +58,12 @@ class ElevationReader(object):
         for feat, geom in feature_map.items():
             if not geom.intersects(line):
                 continue
-            isect_pts = [
+            elevation = float(feat.attribute(self.layer_attr))
+            for x_value in [
                 length * line.project(pt, True)
                 for pt in flatten(line.intersection(geom))
-            ]
-            elevation = float(feat.attribute(self.layer_attr))
-            for isect_pt in isect_pts:
-                points.append(QPointF(isect_pt, elevation))
+            ]:
+                points.append(QPointF(x_value, elevation))
         min_px = min(p.x() for p in points)
         if min_px < 0.:
             self.points = sorted(
