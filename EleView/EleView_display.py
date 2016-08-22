@@ -87,9 +87,10 @@ class ElevationDisplay(object):
         line = QLineF(self.line.line())
         
         # Mutate it based on the value provided by the slider
+        disp = self.display
         method, line_pt, orig_pt_y, lbl = {
-            self.display.pt1Slider: (line.setP1, line.p1(), self.orig_pt1_y, self.display.lblPt1),
-            self.display.pt2Slider: (line.setP2, line.p2(), self.orig_pt2_y, self.display.lblPt2),
+            disp.pt1Slider: (line.setP1, line.p1(), self.orig_pt1_y, disp.lblPt1),
+            disp.pt2Slider: (line.setP2, line.p2(), self.orig_pt2_y, disp.lblPt2),
         }[slider]
         method(QPointF(line_pt.x(), orig_pt_y + value))
 
