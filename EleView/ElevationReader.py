@@ -74,14 +74,16 @@ class ElevationReader(object):
                 for pt in flatten(line.intersection(geom))
             ]:
                 points.append(QPointF(x_value, elevation))
-        min_px = min(p.x() for p in points)
-        if min_px < 0.:
-            self.points = sorted(
-                [QPointF(p.x() + (-min_px), p.y()) for p in points],
-                key=lambda p: p.x()
-            )
-        else:
-            self.points = sorted(points, key=lambda p: p.x())
+        if points:
+            min_px = min(p.x() for p in points)
+            if min_px < 0.:
+                self.points = sorted(
+                    [QPointF(p.x() + (-min_px), p.y()) for p in points],
+                    key=lambda p: p.x()
+                )
+            else:
+                self.points = sorted(points, key=lambda p: p.x())
+        self.points = points
 
     def extract_elevations(self):
         feat_geom_map = self._retrieve_features()

@@ -12,7 +12,7 @@ name=Elevation Viewer
 qgisMinimumVersion=2.0
 description=Allows easy extrapolation from a vector elevation layer to determine the elevation between two points
 about=Allows easy extrapolation from a vector elevation layer to determine the elevation between two points.  The user is prompted to select two points between which elevation will be measured.  This information, along with the layer on which the vector-elevation data resides, the attribute that represents the elevation, and selection of a suitable projection allows the elevation to be determined.  The result is a 2D "side view" with a line representing line-of-sight between the two points, overlaid on a "terrain" view.
-version=0.2
+version=0.3.0
 author=James Fysh
 email=james.fysh@gmail.com
 homepage=https://github.com/JamesFysh/eleview/wiki
@@ -32,6 +32,11 @@ changelog=0.1:
     * Corrected labelling on the main dialog
     * Non-functional code-refactoring
     * UI improvements on the main dialog
+
+    0.3
+    * Handle polygons in vector layer correctly
+    * Ignore features that don't actually intersect the line between the points
+      given by the user.
 # Tags are comma separated with spaces allowed
 tags=analysis, vector, elevation
 
