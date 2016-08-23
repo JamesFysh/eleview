@@ -6,7 +6,7 @@ from PyQt4.QtGui import QPainterPath, QGraphicsScene, QPen, QBrush
 from qgis.core import QgsMessageLog
 
 from .ElevationReader import ElevationReader
-from .EleView_dialog_display import EleViewDialogDisp
+from .EleView_dialogs import EleViewDialogDisp
 
 ZOOM_IN_FACTOR = 1.25
 ZOOM_OUT_FACTOR = 1 / ZOOM_IN_FACTOR
@@ -87,10 +87,9 @@ class ElevationDisplay(object):
         line = QLineF(self.line.line())
         
         # Mutate it based on the value provided by the slider
-        disp = self.display
         method, line_pt, orig_pt_y, lbl = {
-            disp.pt1Slider: (line.setP1, line.p1(), self.orig_pt1_y, disp.lblPt1),
-            disp.pt2Slider: (line.setP2, line.p2(), self.orig_pt2_y, disp.lblPt2),
+            self.display.pt1Slider: (line.setP1, line.p1(), self.orig_pt1_y, self.display.lblPt1),
+            self.display.pt2Slider: (line.setP2, line.p2(), self.orig_pt2_y, self.display.lblPt2),
         }[slider]
         method(QPointF(line_pt.x(), orig_pt_y + value))
 

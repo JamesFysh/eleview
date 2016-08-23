@@ -41,11 +41,11 @@ from processing import getVectorLayers
 from processing.core.parameters import ParameterVector
 
 # Initialize Qt resources from file resources.py
-import resources_rc
+from . import resources_rc
 
 # Import the code for the dialog
-from EleView_dialog import EleViewDialog
-from EleView_display import ElevationDisplay
+from .EleView_dialogs import EleViewMainDialog
+from .EleView_display import ElevationDisplay
 
 
 class EleView:
@@ -89,7 +89,7 @@ class EleView:
                 QCoreApplication.installTranslator(self.translator)
 
         # Create the dialog (after translation) and keep reference
-        self.dlg = EleViewDialog()
+        self.dlg = EleViewMainDialog()
         self.display = None
 
         # Declare instance attributes
@@ -110,7 +110,6 @@ class EleView:
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('EleView', message)
-
 
     def add_action(
         self,
