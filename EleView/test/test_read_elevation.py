@@ -190,8 +190,11 @@ class TestElevationReader(unittest.TestCase):
                 self.measure_crs,
             )
             reader.extract_elevations()
-            self.assertGreater(len(reader.points), 9)
-            for point in reader.points:
+            points = reader.points
+            self.assertGreater(len(points), 9)
+            p_x = [p.x() for p in points]
+            self.assertListEqual(p_x, sorted(p_x))
+            for point in points:
                 self.assertTrue(10 < point.y())
                 self.assertTrue(point.y() < 200)
                 self.assertTrue(0 < point.x())
@@ -204,6 +207,8 @@ class TestElevationReader(unittest.TestCase):
         points = self.extract_elevation_helper(p1, p2, [])
 
         # Evaluate the results
+        p_x = [p.x() for p in points]
+        self.assertListEqual(p_x, sorted(p_x))
         self.assertEqual(len(points), 0)
 
     def test_multi_intersect(self):
@@ -233,6 +238,8 @@ class TestElevationReader(unittest.TestCase):
 
         # Evaluate the results
         self.assertEqual(len(points), len(ls_points) - 1)
+        p_x = [p.x() for p in points]
+        self.assertListEqual(p_x, sorted(p_x))
         for point in points:
             self.assertEqual(point.y(), 20)
 
@@ -256,6 +263,8 @@ class TestElevationReader(unittest.TestCase):
 
         # Evaluate the results
         self.assertEqual(len(points), 16)
+        p_x = [p.x() for p in points]
+        self.assertListEqual(p_x, sorted(p_x))
         for point in points:
             self.assertTrue(10 < point.y())
             self.assertTrue(point.y() < 200)
