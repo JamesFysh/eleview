@@ -9,14 +9,10 @@ def de_polygonize(geometry):
     if geometry.type() == QGis.Polygon:
         polygon = geometry.asPolygon()
         exterior = polygon[0]
-        result = [
+        return [
             QgsGeometry.fromPolyline([p1, p2])
             for p1, p2 in zip(exterior[0::1], exterior[1::1])
         ]
-        print "results:"
-        for l in result:
-            print l.exportToWkt()
-        return result
     return [geometry]
 
 
@@ -67,7 +63,6 @@ class ElevationReader(object):
 
     def _generate_points(self, line, feature_map):
         points = []
-        print "over", line.exportToWkt()
         for feat, geoms in feature_map.items():
             for geom in geoms:
                 if not geom.intersects(line):
