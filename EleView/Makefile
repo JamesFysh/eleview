@@ -40,8 +40,7 @@ SOURCES = \
 	__init__.py \
 	ElevationReader.py \
 	EleView.py \
-	EleView_dialog.py \
-	EleView_dialog_display.py \
+	EleView_dialogs.py \
 	EleView_display.py
 
 
@@ -51,8 +50,7 @@ PY_FILES = \
 	__init__.py \
 	ElevationReader.py \
 	EleView.py \
-	EleView_dialog.py \
-	EleView_dialog_display.py \
+	EleView_dialogs.py \
 	EleView_display.py
 
 UI_FILES = \
