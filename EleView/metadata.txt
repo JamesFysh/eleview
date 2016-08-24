@@ -33,15 +33,17 @@ changelog=0.1:
     * Non-functional code-refactoring
     * UI improvements on the main dialog
 
-    0.3
+    0.3.0
     * Handle polygons in vector layer correctly
     * Ignore features that don't actually intersect the line between the points
       given by the user.
     * Remove the dependency on shapely, a library I believe is not included in QGIS
+
 # Tags are comma separated with spaces allowed
 tags=analysis, vector, elevation
 
 category=Plugins
+
 # experimental flag
 experimental=False
 
