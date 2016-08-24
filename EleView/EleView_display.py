@@ -1,7 +1,9 @@
 from functools import partial
 
 from PyQt4.QtCore import Qt, QPointF, QLineF, QObject, SIGNAL
-from PyQt4.QtGui import QPainterPath, QGraphicsScene, QPen, QBrush
+from PyQt4.QtGui import (
+    QPainterPath, QGraphicsScene, QPen, QBrush, QColor, QLinearGradient
+)
 
 from qgis.core import QgsMessageLog
 
@@ -137,11 +139,16 @@ class ElevationDisplay(object):
         )
         path.lineTo(points[0])
 
+        height = path.boundingRect().height()
+
         scene = QGraphicsScene(self.display)
+        gradient = QLinearGradient(QPointF(0., height), QPointF(0., 0.))
+        gradient.setColorAt(0, QColor(0x00b300))
+        gradient.setColorAt(1, QColor(0x331a00))
         self.path = scene.addPath(
             path,
-            QPen(Qt.black, 1),
-            QBrush(Qt.darkGreen, Qt.Dense4Pattern)
+            QPen(Qt.blue, 1),
+            QBrush(gradient)
         )
         self.line = scene.addLine(
             QLineF(points[0], points[-1]),
