@@ -4,6 +4,7 @@ A plugin to enable easy visualisation of vector-based elevation data.
   
 Layers in QGIS can easily be configured to "hint" at the elevation of individual 
 vectors, giving rise to a visually appealing and informative top-down view:
+
 ![elevation sample](https://fyshing.net/elevation_sample.png)
 
 However I found that whilst I could get a good, approximate understanding of 
