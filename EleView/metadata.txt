@@ -39,6 +39,8 @@ changelog=0.1:
       given by the user.
     * Remove the dependency on shapely, a library I believe is not included in QGIS
     * Better looking rendering of elevations
+    * Fixed a bug that would cause the plugin to fail to load under windows (oops!
+      I only tend to run Linux!)
 
 # Tags are comma separated with spaces allowed
 tags=analysis, vector, elevation
