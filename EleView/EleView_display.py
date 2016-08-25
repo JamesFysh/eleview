@@ -1,3 +1,4 @@
+from math import sqrt
 from functools import partial
 
 from PyQt4.QtCore import Qt, QPointF, QLineF, QObject, SIGNAL
@@ -12,6 +13,11 @@ from .EleView_dialogs import EleViewDialogDisp
 
 ZOOM_IN_FACTOR = 1.25
 ZOOM_OUT_FACTOR = 1 / ZOOM_IN_FACTOR
+
+
+def fresnel_radius(distance_meters, frequency_mhz):
+    radius_meters = 17.32 * sqrt(distance_meters / (4 * frequency_mhz))
+    return radius_meters
 
 
 class ElevationDisplay(object):
@@ -57,6 +63,11 @@ class ElevationDisplay(object):
                 SIGNAL("valueChanged(int)"),
                 partial(self.slider_moved, slider)
             )
+        QObject.connect(
+            self.display.enableFresnel,
+            SIGNAL("stateChanged(int)"),
+            self.display.frequency.setEnabled
+        )
 
     def hide(self):
         # Hide the elevation-view dialog
@@ -85,6 +96,9 @@ class ElevationDisplay(object):
         qgv.translate(delta.x(), delta.y())
 
     def slider_moved(self, slider, value):
+        if self.display is None:
+            return
+        
         # Copy the current line
         line = QLineF(self.line.line())
         
