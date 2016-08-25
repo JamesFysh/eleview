@@ -98,7 +98,7 @@ class ElevationDisplay(object):
     def slider_moved(self, slider, value):
         if self.display is None:
             return
-        
+
         # Copy the current line
         line = QLineF(self.line.line())
         
@@ -120,37 +120,31 @@ class ElevationDisplay(object):
         # Update the relevant label for the slider
         lbl.setText("+{} m".format(value))
 
+    @staticmethod
+    def log_points(the_points):
+        x, y = [p.x() for p in the_points], [p.y() for p in the_points]
+        QgsMessageLog.logMessage(
+            "Elevations span over {} units horizontally, with a maximum "
+            "elevation of {} and minimum of {}, comprised of {} distinct "
+            "points".format(
+                max(x) - min(x), max(y), min(y), len(the_points)
+            ),
+            level=QgsMessageLog.INFO
+        )
+
     def show_elevation(self, points):
         if not points:
             return
         self.configure_display()
 
+        self.log_points(points)
+
         # Set up the scene
-        QgsMessageLog.logMessage(
-            "starting at {}".format(points[0]),
-            level=QgsMessageLog.INFO
-        )
         path = QPainterPath(points[0])
         for point in points[1:]:
-            QgsMessageLog.logMessage(
-                "to {}".format(point),
-                level=QgsMessageLog.INFO
-            )
             path.lineTo(point)
-        QgsMessageLog.logMessage(
-            "to {},{}".format(points[-1].x(), 0),
-            level=QgsMessageLog.INFO
-        )
         path.lineTo(points[-1].x(), 0)
-        QgsMessageLog.logMessage(
-            "to {},{}".format(points[0].x(), 0),
-            level=QgsMessageLog.INFO
-        )
         path.lineTo(points[0].x(), 0)
-        QgsMessageLog.logMessage(
-            "to {}".format(points[0]),
-            level=QgsMessageLog.INFO
-        )
         path.lineTo(points[0])
 
         height = path.boundingRect().height()

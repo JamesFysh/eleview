@@ -75,9 +75,10 @@ class ElevationReader(object):
                     points.append(QPointF(x_value, elevation))
         if points:
             min_px = min(p.x() for p in points)
-            if min_px < 0.:
-                points = [QPointF(p.x() + abs(min_px), p.y()) for p in points]
-            points = sorted(points, key=lambda p: p.x())
+            points = sorted(
+                [QPointF(p.x() - min_px, p.y()) for p in points],
+                key=lambda p: p.x()
+            )
         self.points = points
 
     def extract_elevations(self):

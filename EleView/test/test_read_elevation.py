@@ -270,4 +270,4 @@ class TestElevationReader(unittest.TestCase):
         for point in points:
             self.assertTrue(10 < point.y())
             self.assertTrue(point.y() < 200)
-            self.assertTrue(0 < point.x())
+            self.assertTrue(0 <= point.x())
