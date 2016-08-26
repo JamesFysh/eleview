@@ -39,6 +39,7 @@ LOCALES =
 SOURCES = \
 	__init__.py \
 	ElevationReader.py \
+	ElevationScene.py \
 	EleView.py \
 	EleView_dialogs.py \
 	EleView_display.py
@@ -49,6 +50,7 @@ PLUGINNAME = EleView
 PY_FILES = \
 	__init__.py \
 	ElevationReader.py \
+	ElevationScene.py \
 	EleView.py \
 	EleView_dialogs.py \
 	EleView_display.py
