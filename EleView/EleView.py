@@ -286,6 +286,7 @@ class EleView:
         )
         self.ptsCaptured[self.ptCapturing] = QgsPoint(pt)
         self.ptCapturing.setText(str(pt))
+        self.dlg.raise_()
         
         if len(self.ptsCaptured) == 2:
             self.dlg.btnShowElevation.setEnabled(True)
