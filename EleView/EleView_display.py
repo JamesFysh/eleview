@@ -87,14 +87,14 @@ class ElevationDisplay(object):
     def freq_event(self, value):
         if self.scene is None:
             return
-        self.scene.fresnel_event(self.frequency.enabled, value)
+        self.scene.fresnel_event(self.display.frequency.isEnabled(), value)
 
     def fresnel_event(self, state):
         enabled = True if state else False
         frequency = self.display.frequency
         frequency.setEnabled(enabled)
         if self.scene:
-            self.scene.fresnel_event(enabled, frequency.value)
+            self.scene.fresnel_event(enabled, frequency.value())
 
     @staticmethod
     def log_points(the_points):
@@ -114,5 +114,5 @@ class ElevationDisplay(object):
         self.log_points(points)
         self.configure_dialog()
         frequency = self.display.frequency
-        self.scene.initialize(points, frequency.enabled, frequency.value)
+        self.scene.initialize(points, frequency.isEnabled(), frequency.value())
         self.display.show()

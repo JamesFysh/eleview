@@ -37,7 +37,7 @@ class ElevationScene(object):
     @staticmethod
     def overlay_for(pt1, pt2, frequency):
         line = QLineF(pt1, pt2)
-        radius = fresnel_radius(pt2.distance(pt1), frequency)
+        radius = fresnel_radius(line.length(), frequency)
         zone = None
 
         return line, zone
