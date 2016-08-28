@@ -78,9 +78,9 @@ class ElevationScene(object):
         line = QLineF(self.line.line())
 
         # Mutate it based on the value provided by the slider
-        method, line_pt, lbl = {
-            PT1: (line.setP1, line.p1(), self.display.lblPt1),
-            PT2: (line.setP2, line.p2(), self.display.lblPt2),
+        method, line_pt= {
+            PT1: (line.setP1, line.p1()),
+            PT2: (line.setP2, line.p2())
         }[point]
         method(QPointF(line_pt.x(), self.p_y[point] + value))
 
@@ -91,9 +91,6 @@ class ElevationScene(object):
         self.line.setPen(QPen(
             Qt.red if self.line.collidesWithItem(self.path) else Qt.green, 1
         ))
-
-        # Update the relevant label for the slider
-        lbl.setText("+{} m".format(value))
 
     def zoom_event(self, pos, delta):
         # Save the scene pos

@@ -79,10 +79,14 @@ class ElevationDisplay(object):
     def slider_moved(self, slider, value):
         if self.scene is None:
             return
-        self.scene.slider_event(
-            {self.display.pt1Slider: PT1, self.display.pt2Slider: PT2}[slider],
-            value
-        )
+        pt = {self.display.pt1Slider: PT1, self.display.pt2Slider: PT2}[slider]
+
+        # Update the relevant label for the slider
+        lbl = self.display.lblPt1 if pt == PT1 else self.display.lblPt2
+        lbl.setText("+{} m".format(value))
+
+        # And update the geometry in the scene
+        self.scene.slider_event(pt, value)
 
     def freq_event(self, value):
         if self.scene is None:
