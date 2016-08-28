@@ -29,3 +29,5 @@ This plugin is quite new, and there are a lot of things still to do:
   between first & last elevation vector encountered along the path between start,
   end points
 * Better point-capture functionality
+* Allow the elevation view to use a different scale for the horizontal axis to
+  that of the vertical axis
