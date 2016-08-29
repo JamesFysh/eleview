@@ -21,7 +21,6 @@ particularly how good the line-of-sight would be.
 
 ##### TODO
 This plugin is quite new, and there are a lot of things still to do:
-* Fresnel zone calculations (https://en.wikipedia.org/wiki/Fresnel_zone)
 * Remove the "units are in meters" assumption - ask the user for unit of measure
 * Capturing more than two points
 * Display of captured points on the main QGIS display

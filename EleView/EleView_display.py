@@ -18,8 +18,6 @@ class ElevationDisplay(object):
     the path between the start & end point).
     """
     def __init__(self, iface, ptsCaptured, elev_layer, elev_attr, measure_crs):
-        self.orig_pt1_y = None
-        self.orig_pt2_y = None
         self.display = None
         self.scene = None
 

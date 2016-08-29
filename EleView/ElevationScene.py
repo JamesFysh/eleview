@@ -3,11 +3,13 @@ from math import sqrt, atan2
 from PyQt4.QtGui import (
     QPainterPath, QGraphicsScene, QPen, QBrush, QColor, QLinearGradient
 )
-from PyQt4.QtCore import Qt, QPointF, QLineF
+from PyQt4.QtCore import Qt, QPointF, QLineF, QRectF
+from PyQt4.QtGui import QTransform
 
 ZOOM_IN_FACTOR = 1.25
 ZOOM_OUT_FACTOR = 1 / ZOOM_IN_FACTOR
 PT1, PT2 = "first point", "second point"
+gpen, rpen = QPen(Qt.green, 1), QPen(Qt.red, 1)
 
 
 def fresnel_radius(distance_meters, frequency_mhz):
@@ -19,10 +21,17 @@ class ElevationScene(object):
     def __init__(self, dialog, view):
         self.dialog = dialog
         self.view = view
+        self.scene = None
         self.line = None
         self.path = None
         self.zone = None
-        self.p_y = {}
+        self.pts = {}
+        self.y_delta = {
+            PT1: 0.,
+            PT2: 0.
+        }
+        self.fresnel_visible = False
+        self.frequency = 2400
 
     @staticmethod
     def path_for(points):
@@ -36,21 +45,38 @@ class ElevationScene(object):
 
     @staticmethod
     def overlay_for(pt1, pt2, frequency):
+        # Construct the line-geometry, we'll use this to construct the ellipsoid
         line = QLineF(pt1, pt2)
+
+        # Determine the radius for the ellipsoid
         radius = fresnel_radius(line.length(), frequency)
-        zone = None
+
+        # Draw the ellipsoid
+        zone = QPainterPath()
+        zone.addEllipse(QPointF(0., 0.), line.length() / 2, radius)
+
+        # Rotate the ellipsoid - same angle as the line
+        transform = QTransform()
+        transform.rotate(-line.angle())
+        zone = transform.map(zone)
+
+        # Center the zone over the line
+        lc = QRectF(pt1, pt2).center()
+        zc = zone.boundingRect().center()
+        zone.translate(lc.x() - zc.x(), lc.y() - zc.y())
 
         return line, zone
 
     def initialize(self, points, show_fresnel, frequency):
-        self.p_y = {
-            PT1: points[0].y(),
-            PT2: points[-1].y()
+        self.pts = {
+            PT1: points[0],
+            PT2: points[-1]
         }
+        self.fresnel_visible = show_fresnel
+        self.frequency = frequency
 
-        # Construct geometries to be included in the scene
+        # Construct static geometry to be included in the scene
         path = self.path_for(points)
-        line, zone = self.overlay_for(points[0], points[-1], frequency)
 
         height = path.boundingRect().height()
         gradient = QLinearGradient(QPointF(0., height), QPointF(0., 0.))
@@ -58,39 +84,41 @@ class ElevationScene(object):
         gradient.setColorAt(1, QColor(0x331a00))
 
         # Create the scene
-        scene = QGraphicsScene(self.dialog)
+        self.scene = QGraphicsScene(self.dialog)
 
         # Add geometries to the scene, keeping a reference to each
-        self.path = scene.addPath(path, QPen(Qt.blue, 1), QBrush(gradient))
-        self.line = scene.addLine(line, QPen(Qt.green, 1))
-        self.zone = scene.addEllipse(0., 0., 0., 0.)
+        self.path = self.scene.addPath(path, QPen(Qt.blue, 1), QBrush(gradient))
 
-        if self.line.collidesWithItem(self.path):
-            self.line.setPen(QPen(Qt.red, 1))
+        # Update the scene; i.e. correct pen-colours etc.
+        self.update_scene(add_geometries=True)
 
-        # Set up the view
-        self.view.setScene(scene)
-        self.view.ensureVisible(scene.sceneRect())
+        # Set up the view with the constructed scene
+        self.view.setScene(self.scene)
+        self.view.ensureVisible(self.scene.sceneRect())
         self.view.scale(1., -1.)
 
-    def slider_event(self, point, value):
-        # Copy the current line
-        line = QLineF(self.line.line())
-
-        # Mutate it based on the value provided by the slider
-        method, line_pt= {
-            PT1: (line.setP1, line.p1()),
-            PT2: (line.setP2, line.p2())
-        }[point]
-        method(QPointF(line_pt.x(), self.p_y[point] + value))
+    def update_scene(self, add_geometries=False):
+        # Get new geometries
+        line, zone = self.overlay_for(
+            self.pts[PT1] + QPointF(0., self.y_delta[PT1]),
+            self.pts[PT2] + QPointF(0., self.y_delta[PT2]),
+            self.frequency
+        )
 
         # And update the line geometry - this shall be reflected in the scene
-        self.line.setLine(line)
+        if add_geometries:
+            self.line = self.scene.addLine(line)
+            self.zone = self.scene.addPath(zone)
+        else:
+            self.line.setLine(line)
+            self.zone.setPath(zone)
 
-        # Colour the line as appropriate
-        self.line.setPen(QPen(
-            Qt.red if self.line.collidesWithItem(self.path) else Qt.green, 1
-        ))
+        # Colour the line & zone as appropriate
+        for item in (self.line, self.zone):
+            item.setPen(rpen if item.collidesWithItem(self.path) else gpen)
+
+        # Show/hide the fresnel zone as requested
+        self.zone.setVisible(self.fresnel_visible)
 
     def zoom_event(self, pos, delta):
         # Save the scene pos
@@ -107,8 +135,11 @@ class ElevationScene(object):
         delta = new_pos - old_pos
         self.view.translate(delta.x(), delta.y())
 
+    def slider_event(self, point, value):
+        self.y_delta[point] = value
+        self.update_scene()
+
     def fresnel_event(self, show_fresnel, value):
-        if show_fresnel is False:
-            self.zone.hide()
-        else:
-            pass
+        self.fresnel_visible = show_fresnel
+        self.frequency = value
+        self.update_scene()
