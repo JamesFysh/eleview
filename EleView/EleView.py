@@ -3,7 +3,8 @@
 /***************************************************************************
  EleView
                                  A QGIS plugin
- Allows easy extrapolation from a vector elevation layer to determine the elevation between two points
+ Allows easy extrapolation from a vector elevation layer to determine the
+ elevation between two points
                               -------------------
         begin                : 2015-04-05
         git sha              : $Format:%H$
