@@ -37,31 +37,31 @@ LOCALES =
 
 # translation
 SOURCES = \
-	__init__.py \
-	ElevationReader.py \
-	ElevationScene.py \
-	EleView.py \
-	EleView_dialogs.py \
-	EleView_display.py
+	src/__init__.py \
+	src/ElevationReader.py \
+	src/ElevationScene.py \
+	src/EleView.py \
+	src/EleView_dialogs.py \
+	src/EleView_display.py
 
 
 PLUGINNAME = EleView
 
 PY_FILES = \
-	__init__.py \
-	ElevationReader.py \
-	ElevationScene.py \
-	EleView.py \
-	EleView_dialogs.py \
-	EleView_display.py
+	src/__init__.py \
+	src/ElevationReader.py \
+	src/ElevationScene.py \
+	src/EleView.py \
+	src/EleView_dialogs.py \
+	src/EleView_display.py
 
 UI_FILES = \
-	EleView_dialog_base.ui \
-	EleView_dialog_display.ui
+	src/EleView_dialog_base.ui \
+	src/EleView_dialog_display.ui
 
-EXTRAS = icon.png metadata.txt
+EXTRAS = src/icon.png metadata.txt
 
-COMPILED_RESOURCE_FILES = resources_rc.py
+COMPILED_RESOURCE_FILES = src/resources_rc.py
 
 PEP8EXCLUDE=pydev,resources_rc.py,conf.py,third_party,ui
 
@@ -86,7 +86,7 @@ compile: $(COMPILED_RESOURCE_FILES)
 %.qm : %.ts
 	$(LRELEASE) $<
 
-test: compile transcompile
+test: compile
 	@echo
 	@echo "----------------------"
 	@echo "Regression Test Suite"
@@ -104,7 +104,7 @@ test: compile transcompile
 	@echo "e.g. source run-env-linux.sh <path to qgis install>; make test"
 	@echo "----------------------"
 
-deploy: compile transcompile
+deploy: compile
 	@echo
 	@echo "------------------------------------------"
 	@echo "Deploying plugin to your .qgis2 directory."
@@ -167,42 +167,12 @@ upload: zip
 	@echo "-------------------------------------"
 	$(PLUGIN_UPLOAD) $(PLUGINNAME).zip
 
-transup:
-	@echo
-	@echo "------------------------------------------------"
-	@echo "Updating translation files with any new strings."
-	@echo "------------------------------------------------"
-	@chmod +x scripts/update-strings.sh
-	@scripts/update-strings.sh $(LOCALES)
-
-transcompile:
-	@echo
-	@echo "----------------------------------------"
-	@echo "Compiled translation files to .qm files."
-	@echo "----------------------------------------"
-	@chmod +x scripts/compile-strings.sh
-	@scripts/compile-strings.sh $(LRELEASE) $(LOCALES)
-
 clean:
 	@echo
 	@echo "------------------------------------"
 	@echo "Removing uic and rcc generated files"
 	@echo "------------------------------------"
 	rm $(COMPILED_UI_FILES) $(COMPILED_RESOURCE_FILES)
-
-
-pylint:
-	@echo
-	@echo "-----------------"
-	@echo "Pylint violations"
-	@echo "-----------------"
-	@pylint --reports=n --rcfile=pylintrc . || true
-	@echo
-	@echo "----------------------"
-	@echo "If you get a 'no module named qgis.core' error, try sourcing"
-	@echo "the helper script we have provided first then run make pylint."
-	@echo "e.g. source run-env-linux.sh <path to qgis install>; make pylint"
-	@echo "----------------------"
 
 
 # Run pep8 style checking
