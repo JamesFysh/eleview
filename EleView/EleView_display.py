@@ -1,12 +1,15 @@
 from functools import partial
 
-from PyQt4.QtCore import Qt, QPointF, QLineF, QObject, SIGNAL
+from PyQt4.QtCore import QObject, SIGNAL
 
 from qgis.core import QgsMessageLog
 
 from .ElevationReader import ElevationReader
 from .ElevationScene import ElevationScene, PT1, PT2
 from .EleView_dialogs import EleViewDialogDisp
+
+
+log = QgsMessageLog.instance()
 
 
 class ElevationDisplay(object):
@@ -17,17 +20,16 @@ class ElevationDisplay(object):
     based on interpolation over the elevation of each vector encountered along
     the path between the start & end point).
     """
-    def __init__(self, iface, ptsCaptured, elev_layer, elev_attr, measure_crs):
+    def __init__(self, pt1, pt2, elev_layer, elev_attr, layer_crs, measure_crs):
         self.display = None
         self.scene = None
 
-        pt1, pt2 = ptsCaptured
         self.reader = ElevationReader(
             pt1,
             pt2,
             elev_layer,
             elev_attr,
-            iface.mapCanvas().mapSettings().destinationCrs(),
+            layer_crs,
             measure_crs
         )
 
@@ -57,7 +59,7 @@ class ElevationDisplay(object):
         )
         QObject.connect(
             self.display.frequency,
-            SIGNAL("valueChanged(int"),
+            SIGNAL("valueChanged(int)"),
             self.freq_event
         )
 
@@ -101,7 +103,7 @@ class ElevationDisplay(object):
     @staticmethod
     def log_points(the_points):
         x, y = [p.x() for p in the_points], [p.y() for p in the_points]
-        QgsMessageLog.logMessage(
+        log.logMessage(
             "Elevations span over {} units horizontally, with a maximum "
             "elevation of {} and minimum of {}, comprised of {} distinct "
             "points".format(

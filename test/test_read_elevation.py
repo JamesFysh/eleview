@@ -245,7 +245,6 @@ class TestElevationReader(unittest.TestCase):
 
     def test_poly_intersect(self):
         # Define the two captured points
-
         p1 = QgsPoint(20.00871557427477, 10.00038053019082)
         p2 = QgsPoint(19.99128442572524, 10.19961946980917)
         centroid = QgsGeometry.fromPoint(QgsPoint(20., 10.1))

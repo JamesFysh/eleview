@@ -8,7 +8,7 @@ from EleView.EleView_dialogs import EleViewDialogDisp
 from EleView.ElevationScene import fresnel_radius, ElevationScene, PT1
 
 
-class TestElevationScene(unittest.TestCase):
+class TestElevationSceneStaticMethods(unittest.TestCase):
     def test_path_for_empty_list_raises(self):
         self.assertRaises(IndexError, ElevationScene.path_for, [])
 
@@ -38,10 +38,18 @@ class TestElevationScene(unittest.TestCase):
             "{} not contained by {}".format(lrect, expanded_zrect)
         )
 
+
+class TestElevationSceneView(unittest.TestCase):
+    def setUp(self):
+        self.dialog = EleViewDialogDisp()
+        self.scene = ElevationScene(self.dialog, self.dialog.eleView)
+        self.scene.initialize(
+            [QPointF(0., 100.), QPointF(100., 100.)], True, 2400
+        )
+
+
     def test_scene_has_expected_items(self):
-        dialog = EleViewDialogDisp()
-        scene = ElevationScene(dialog, dialog.eleView)
-        scene.initialize([QPointF(0., 100.), QPointF(100., 100.)], True, 2400)
+        scene = self.scene
         self.assertIsNotNone(scene.line)
         self.assertIsNotNone(scene.path)
         self.assertIsNotNone(scene.zone)
@@ -52,9 +60,7 @@ class TestElevationScene(unittest.TestCase):
         )
 
     def test_scene_geometries_make_sense(self):
-        dialog = EleViewDialogDisp()
-        scene = ElevationScene(dialog, dialog.eleView)
-        scene.initialize([QPointF(0., 100.), QPointF(100., 100.)], True, 2400)
+        scene = self.scene
         self.assertGreater(
             scene.line.boundingRect().top(), scene.path.boundingRect().top(),
         )
@@ -63,9 +69,7 @@ class TestElevationScene(unittest.TestCase):
         )
 
     def test_scene_geometries_mutate_on_slide(self):
-        dialog = EleViewDialogDisp()
-        scene = ElevationScene(dialog, dialog.eleView)
-        scene.initialize([QPointF(0., 100.), QPointF(100., 100.)], True, 2400)
+        scene = self.scene
 
         line_before = scene.line.line()
         zone_before = scene.zone.path()
@@ -79,9 +83,7 @@ class TestElevationScene(unittest.TestCase):
         )
 
     def test_scene_geometries_mutate_on_fresnel(self):
-        dialog = EleViewDialogDisp()
-        scene = ElevationScene(dialog, dialog.eleView)
-        scene.initialize([QPointF(0., 100.), QPointF(100., 100.)], True, 2400)
+        scene = self.scene
 
         zone_before = scene.zone.boundingRect()
         scene.fresnel_event(True, 2400)

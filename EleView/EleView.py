@@ -68,7 +68,7 @@ class EleView:
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
         self.previousTool = None
         self.ptCapturing = None
-        self.ptsCaptured = {}
+        self.pt1, self.pt2 = None, None
         # Layer handling
         self.curr_layer = None
         self.layer_map = {}
@@ -221,7 +221,8 @@ class EleView:
         for action in self.actions:
             self.iface.removePluginMenu(
                 self.tr(u'&Elevation Viewer'),
-                action)
+                action
+            )
             self.iface.removeToolBarIcon(action)
         self.cleanup()
 
@@ -285,19 +286,27 @@ class EleView:
             "Mouse-click: {}, {}".format(pt, btn), 
             level=QgsMessageLog.INFO
         )
-        self.ptsCaptured[self.ptCapturing] = QgsPoint(pt)
+        setattr(
+            self,
+            {
+                self.dlg.point1: "pt1",
+                self.dlg.point2: "pt2"
+            }[self.ptCapturing],
+            QgsPoint(pt)
+        )
         self.ptCapturing.setText(str(pt))
         self.dlg.raise_()
         
-        if len(self.ptsCaptured) == 2:
+        if all(x is not None for x in [self.pt1, self.pt2]):
             self.dlg.btnShowElevation.setEnabled(True)
 
     def showElevClicked(self):
         self.display = ElevationDisplay(
-            self.iface,
-            self.ptsCaptured.values(),
+            self.pt1,
+            self.pt2,
             self.curr_layer,
             self.dlg.cboxElevAttr.currentText(),
+            self.canvas.mapSettings().destinationCrs(),
             self.dlg.cboxElevProj.crs()
         )
         self.display.show()
