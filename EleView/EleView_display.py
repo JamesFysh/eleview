@@ -33,7 +33,7 @@ class ElevationDisplay(object):
     the path between the start & end point).
     """
     def __init__(self, pt1, pt2, elev_layer, elev_attr, layer_crs, measure_crs):
-        self.display = None
+        self.dialog = None
         self.scene = None
 
         self.reader = ElevationReader(
@@ -61,39 +61,39 @@ class ElevationDisplay(object):
         self._configure_scene(self.reader.points)
 
         # Display the dialog
-        self.display.show()
+        self.dialog.show()
 
     def hide(self):
         """
         Hides the dialog
         """
-        if self.display:
-            self.display.hide()
+        if self.dialog:
+            self.dialog.hide()
         self.scene = None
-        self.display = None
+        self.dialog = None
 
     def _configure_dialog(self):
         """
         Set up the dialog, including connecting all signals and slots as
         required.
         """
-        if self.display is None:
-            self.display = EleViewDialogDisp()
-            self.display.wheelEvent = self.wheel_event
-            self.scene = ElevationScene(self.display, self.display.eleView)
-        for slider in (self.display.pt1Slider, self.display.pt2Slider):
+        if self.dialog is None:
+            self.dialog = EleViewDialogDisp()
+            self.dialog.wheelEvent = self.wheel_event
+            self.scene = ElevationScene(self.dialog, self.dialog.eleView)
+        for slider in (self.dialog.pt1Slider, self.dialog.pt2Slider):
             QObject.connect(
                 slider,
                 SIGNAL("valueChanged(int)"),
                 partial(self.slider_moved, slider)
             )
         QObject.connect(
-            self.display.enableFresnel,
+            self.dialog.enableFresnel,
             SIGNAL("stateChanged(int)"),
             self.fresnel_event
         )
         QObject.connect(
-            self.display.frequency,
+            self.dialog.frequency,
             SIGNAL("valueChanged(int)"),
             self.freq_event
         )
@@ -112,7 +112,7 @@ class ElevationDisplay(object):
             return
         log_points(points)
 
-        frequency = self.display.frequency
+        frequency = self.dialog.frequency
         self.scene.initialize(points, frequency.isEnabled(), frequency.value())
 
     def wheel_event(self, event):
@@ -134,10 +134,10 @@ class ElevationDisplay(object):
         """
         if self.scene is None:
             return
-        pt = {self.display.pt1Slider: PT1, self.display.pt2Slider: PT2}[slider]
+        pt = {self.dialog.pt1Slider: PT1, self.dialog.pt2Slider: PT2}[slider]
 
         # Update the relevant label for the slider
-        lbl = self.display.lblPt1 if pt == PT1 else self.display.lblPt2
+        lbl = self.dialog.lblPt1 if pt == PT1 else self.dialog.lblPt2
         lbl.setText("+{} m".format(value))
 
         # And update the geometry in the scene
@@ -151,7 +151,7 @@ class ElevationDisplay(object):
         """
         if self.scene is None:
             return
-        self.scene.fresnel_event(self.display.frequency.isEnabled(), value)
+        self.scene.fresnel_event(self.dialog.frequency.isEnabled(), value)
 
     def fresnel_event(self, state):
         """
@@ -160,7 +160,7 @@ class ElevationDisplay(object):
         :param state: The current state - ticked or un-ticked
         """
         enabled = False if state == Qt.Unchecked else True
-        frequency = self.display.frequency
+        frequency = self.dialog.frequency
         frequency.setEnabled(enabled)
         if self.scene:
             self.scene.fresnel_event(enabled, frequency.value())

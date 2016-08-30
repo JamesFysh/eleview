@@ -47,7 +47,6 @@ class TestElevationSceneView(unittest.TestCase):
             [QPointF(0., 100.), QPointF(100., 100.)], True, 2400
         )
 
-
     def test_scene_has_expected_items(self):
         scene = self.scene
         self.assertIsNotNone(scene.line)
