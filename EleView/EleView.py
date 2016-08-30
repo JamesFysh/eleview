@@ -71,7 +71,7 @@ class EleView:
         # And create an object to capture canvas clicks
         self.clickTool = QgsMapToolEmitPoint(self.canvas)
         self.previousTool = None
-        self.ptCapturing = None
+        self.current_pt = None
         self.pt1, self.pt2 = None, None
         # Layer handling
         self.curr_layer = None
@@ -169,27 +169,27 @@ class EleView:
             (
                 self.clickTool,
                 "canvasClicked(const QgsPoint &, Qt::MouseButton)",
-                self.handleCanvasClick
+                self.canvas_clicked
             ),
             (
                 self.dlg.capturePoint1,
                 "clicked()",
-                partial(self.enableCapture, self.dlg.point1)
+                partial(self.enable_capture, self.dlg.point1)
             ),
             (
                 self.dlg.capturePoint2,
                 "clicked()",
-                partial(self.enableCapture, self.dlg.point2)
+                partial(self.enable_capture, self.dlg.point2)
             ),
             (
                 self.dlg.cboxElevLayer,
                 "currentIndexChanged(const QString&)",
-                self.handleLayerChange
+                self.layer_selection_changed
             ),
             (
                 self.dlg.btnShowElevation,
                 "clicked()",
-                self.showElevClicked
+                self.show_elevation_dialog
             ),
         ):
             QObject.connect(
@@ -255,19 +255,19 @@ class EleView:
         # Clean up, after the tool closes
         self.cleanup()
 
-    def enableCapture(self, ptCapturing):
-        self.ptCapturing = ptCapturing
+    def enable_capture(self, which_pt):
+        self.current_pt = which_pt
         if self.canvas.mapTool() is not self.clickTool:
             self.previousTool = self.canvas.mapTool()
             self.canvas.setMapTool(self.clickTool)
 
-    def handleLayerChange(self, layerName):
+    def layer_selection_changed(self, layer_name):
         log.logMessage(
-            "Layer Name changing to {}".format(layerName),
+            "Layer Name changing to {}".format(layer_name),
             level=QgsMessageLog.INFO
         )
         # Build layer-attribute list
-        self.curr_layer = self.layer_map[layerName]
+        self.curr_layer = self.layer_map[layer_name]
         field_list = self.curr_layer.pendingFields()
         self.layer_attr_map = {
             str(field.name()): field
@@ -277,9 +277,9 @@ class EleView:
         self.dlg.cboxElevAttr.clear()
         self.dlg.cboxElevAttr.addItems(sorted(self.layer_attr_map.keys()))
 
-    def handleCanvasClick(self, pt, btn):
+    def canvas_clicked(self, pt, btn):
         log.logMessage(
-            "Mouse-click: {}, {}".format(pt, btn), 
+            "Mouse-click: {}, {}".format(pt, btn),
             level=QgsMessageLog.INFO
         )
         setattr(
@@ -287,16 +287,16 @@ class EleView:
             {
                 self.dlg.point1: "pt1",
                 self.dlg.point2: "pt2"
-            }[self.ptCapturing],
+            }[self.current_pt],
             QgsPoint(pt)
         )
-        self.ptCapturing.setText(str(pt))
+        self.current_pt.setText(str(pt))
         self.dlg.raise_()
         
         if all(x is not None for x in [self.pt1, self.pt2]):
             self.dlg.btnShowElevation.setEnabled(True)
 
-    def showElevClicked(self):
+    def show_elevation_dialog(self):
         self.display = ElevationDisplay(
             self.pt1,
             self.pt2,
