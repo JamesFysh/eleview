@@ -1,6 +1,6 @@
 from functools import partial
 
-from PyQt4.QtCore import QObject, SIGNAL
+from PyQt4.QtCore import Qt, QObject, SIGNAL
 
 from qgis.core import QgsMessageLog
 
@@ -46,14 +46,37 @@ class ElevationDisplay(object):
         )
 
     def show(self):
+        """
+        Helper function that pulls all the pieces together in order to present
+        the user with a dialog that shows the elevation profile between the two
+        selected points.
+        """
         # Extract elevation details from the vector layer
         self.reader.extract_elevations()
 
-        # And display
-        self.show_elevation(self.reader.points)
+        # Configure the dialog
+        self._configure_dialog()
 
-    def configure_dialog(self):
-        # Helper method to set up the elevation-view dialog
+        # Configure the elevation scene
+        self._configure_scene(self.reader.points)
+
+        # Display the dialog
+        self.display.show()
+
+    def hide(self):
+        """
+        Hides the dialog
+        """
+        if self.display:
+            self.display.hide()
+        self.scene = None
+        self.display = None
+
+    def _configure_dialog(self):
+        """
+        Set up the dialog, including connecting all signals and slots as
+        required.
+        """
         if self.display is None:
             self.display = EleViewDialogDisp()
             self.display.wheelEvent = self.wheel_event
@@ -75,20 +98,40 @@ class ElevationDisplay(object):
             self.freq_event
         )
 
-    def hide(self):
-        # Hide the elevation-view dialog
-        if self.display:
-            self.display.hide()
-        self.scene = None
-        self.display = None
+    def _configure_scene(self, points):
+        """
+        Given a collection of QPointF points, set up a QGraphicsScene, turning
+        those points into a QGraphicsPath representing the elevation profile.
+        Also overlay a line representing line-of-sight and a fresnel zone
+        (useful for making decisions about antenna-height for long-range WiFi
+        installations).
+
+        :param points: A list of QPointF objects
+        """
+        if not points:
+            return
+        log_points(points)
+
+        frequency = self.display.frequency
+        self.scene.initialize(points, frequency.isEnabled(), frequency.value())
 
     def wheel_event(self, event):
+        """
+        Callback slot for mouse-wheel scrolling events
+        :param event: The mouse-wheel event that occurred
+        """
         if self.scene is None:
             return
 
         self.scene.zoom_event(event.pos(), event.delta())
 
     def slider_moved(self, slider, value):
+        """
+        Handles valueChanged signals from the sliders either side of the view.
+
+        :param slider: Which slider widget was changed
+        :param value: The value currently represented by the slider
+        """
         if self.scene is None:
             return
         pt = {self.display.pt1Slider: PT1, self.display.pt2Slider: PT2}[slider]
@@ -101,22 +144,23 @@ class ElevationDisplay(object):
         self.scene.slider_event(pt, value)
 
     def freq_event(self, value):
+        """
+        Handles valueChanged signals from the frequency-selection QSpinBox
+
+        :param value: The current value of the QSpinBox.
+        """
         if self.scene is None:
             return
         self.scene.fresnel_event(self.display.frequency.isEnabled(), value)
 
     def fresnel_event(self, state):
-        enabled = True if state else False
+        """
+        Handles stateChanged signals from the "enable fresnel zone" tickbox.
+
+        :param state: The current state - ticked or un-ticked
+        """
+        enabled = False if state == Qt.Unchecked else True
         frequency = self.display.frequency
         frequency.setEnabled(enabled)
         if self.scene:
             self.scene.fresnel_event(enabled, frequency.value())
-
-    def show_elevation(self, points):
-        if not points:
-            return
-        log_points(points)
-        self.configure_dialog()
-        frequency = self.display.frequency
-        self.scene.initialize(points, frequency.isEnabled(), frequency.value())
-        self.display.show()
