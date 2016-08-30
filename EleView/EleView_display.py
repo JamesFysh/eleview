@@ -12,6 +12,18 @@ from .EleView_dialogs import EleViewDialogDisp
 log = QgsMessageLog.instance()
 
 
+def log_points(the_points):
+    x, y = [p.x() for p in the_points], [p.y() for p in the_points]
+    log.logMessage(
+        "Elevations span over {} units horizontally, with a maximum "
+        "elevation of {} and minimum of {}, comprised of {} distinct "
+        "points".format(
+            max(x) - min(x), max(y), min(y), len(the_points)
+        ),
+        level=QgsMessageLog.INFO
+    )
+
+
 class ElevationDisplay(object):
     """
     This class is responsible for drawing the "Elevation View" display, where 
@@ -100,22 +112,10 @@ class ElevationDisplay(object):
         if self.scene:
             self.scene.fresnel_event(enabled, frequency.value())
 
-    @staticmethod
-    def log_points(the_points):
-        x, y = [p.x() for p in the_points], [p.y() for p in the_points]
-        log.logMessage(
-            "Elevations span over {} units horizontally, with a maximum "
-            "elevation of {} and minimum of {}, comprised of {} distinct "
-            "points".format(
-                max(x) - min(x), max(y), min(y), len(the_points)
-            ),
-            level=QgsMessageLog.INFO
-        )
-
     def show_elevation(self, points):
         if not points:
             return
-        self.log_points(points)
+        log_points(points)
         self.configure_dialog()
         frequency = self.display.frequency
         self.scene.initialize(points, frequency.isEnabled(), frequency.value())
