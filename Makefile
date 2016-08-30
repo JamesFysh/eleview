@@ -42,7 +42,8 @@ SOURCES = \
 	EleView/ElevationScene.py \
 	EleView/EleView.py \
 	EleView/EleView_dialogs.py \
-	EleView/EleView_display.py
+	EleView/EleView_display.py \
+	EleView/SettingsManager.py
 
 
 PLUGINNAME = EleView
@@ -53,7 +54,8 @@ PY_FILES = \
 	EleView/ElevationScene.py \
 	EleView/EleView.py \
 	EleView/EleView_dialogs.py \
-	EleView/EleView_display.py
+	EleView/EleView_display.py \
+	EleView/SettingsManager.py
 
 UI_FILES = \
 	EleView/EleView_dialog_base.ui \

@@ -25,7 +25,7 @@ import os.path
 from functools import partial
 
 from qgis.core import (
-    QgsMessageLog, QgsPoint, QgsProject, QgsCoordinateReferenceSystem,
+    QgsMessageLog, QgsPoint, QgsCoordinateReferenceSystem,
 )
 from qgis.gui import (
     QgsMapToolEmitPoint
@@ -43,6 +43,8 @@ from processing.core.parameters import ParameterVector
 
 # Initialize Qt resources from file resources.py
 from . import resources_rc
+
+from .SettingsManager import SettingsManager, PluginSettings
 
 # Import the code for the dialog
 from .EleView_dialogs import EleViewMainDialog
@@ -75,6 +77,8 @@ class EleView:
         self.curr_layer = None
         self.layer_map = {}
         self.layer_attr_map = {}
+        # Settings handling
+        self.settings = SettingsManager()
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
@@ -201,21 +205,12 @@ class EleView:
         if self.canvas.mapTool() == self.clickTool:
             self.canvas.setMapTool(self.previousTool)
 
-        proj = QgsProject.instance()
-        proj.writeEntry(
-            "eleview",
-            "layername",
-            self.dlg.cboxElevLayer.currentText()
-        )
-        proj.writeEntry(
-            "eleview",
-            "layerattr",
-            self.dlg.cboxElevAttr.currentText()
-        )
-        proj.writeEntry(
-            "eleview",
-            "projdefn",
-            self.dlg.cboxElevProj.crs().toWkt()
+        self.settings.write(
+            PluginSettings(
+                layer_name=self.dlg.cboxElevLayer.currentText(),
+                layer_attr=self.dlg.cboxElevAttr.currentText(),
+                proj_wkt=self.dlg.cboxElevProj.crs().toWkt()
+            )
         )
 
     def unload(self):
@@ -238,19 +233,18 @@ class EleView:
         self.dlg.cboxElevLayer.addItems(sorted(self.layer_map.keys()))
 
         # Attempt to load settings
-        proj = QgsProject.instance()
-        lname = proj.readEntry("eleview", "layername", "???")[0]
-        layer_idx = self.dlg.cboxElevLayer.findText(lname)
+        plugin_settings = self.settings.read()
+        layer_idx = self.dlg.cboxElevLayer.findText(plugin_settings.layer_name)
         if layer_idx != -1:
             self.dlg.cboxElevLayer.setCurrentIndex(layer_idx)
-        lattr = proj.readEntry("eleview", "layerattr", "???")[0]
-        attr_idx = self.dlg.cboxElevAttr.findText(lattr)
+        attr_idx = self.dlg.cboxElevAttr.findText(plugin_settings.layer_attr)
         if attr_idx != -1:
             self.dlg.cboxElevAttr.setCurrentIndex(attr_idx)
-        pname = proj.readEntry("eleview", "projdefn", "???")[0]
-        if pname != "???":
+        if plugin_settings.proj_wkt:
             self.dlg.cboxElevProj.setCrs(
-                QgsCoordinateReferenceSystem(pname)
+                QgsCoordinateReferenceSystem().createFromWkt(
+                    plugin_settings.proj_wkt
+                )
             )
 
         # show the dialog
