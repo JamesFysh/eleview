@@ -242,9 +242,7 @@ class EleView:
             self.dlg.cboxElevAttr.setCurrentIndex(attr_idx)
         if plugin_settings.proj_wkt:
             self.dlg.cboxElevProj.setCrs(
-                QgsCoordinateReferenceSystem().createFromWkt(
-                    plugin_settings.proj_wkt
-                )
+                QgsCoordinateReferenceSystem(plugin_settings.proj_wkt)
             )
 
         # show the dialog
