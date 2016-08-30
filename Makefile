@@ -37,31 +37,31 @@ LOCALES =
 
 # translation
 SOURCES = \
-	src/__init__.py \
-	src/ElevationReader.py \
-	src/ElevationScene.py \
-	src/EleView.py \
-	src/EleView_dialogs.py \
-	src/EleView_display.py
+	EleView/__init__.py \
+	EleView/ElevationReader.py \
+	EleView/ElevationScene.py \
+	EleView/EleView.py \
+	EleView/EleView_dialogs.py \
+	EleView/EleView_display.py
 
 
 PLUGINNAME = EleView
 
 PY_FILES = \
-	src/__init__.py \
-	src/ElevationReader.py \
-	src/ElevationScene.py \
-	src/EleView.py \
-	src/EleView_dialogs.py \
-	src/EleView_display.py
+	EleView/__init__.py \
+	EleView/ElevationReader.py \
+	EleView/ElevationScene.py \
+	EleView/EleView.py \
+	EleView/EleView_dialogs.py \
+	EleView/EleView_display.py
 
 UI_FILES = \
-	src/EleView_dialog_base.ui \
-	src/EleView_dialog_display.ui
+	EleView/EleView_dialog_base.ui \
+	EleView/EleView_dialog_display.ui
 
-EXTRAS = src/icon.png metadata.txt
+EXTRAS = EleView/icon.png metadata.txt
 
-COMPILED_RESOURCE_FILES = src/resources_rc.py
+COMPILED_RESOURCE_FILES = EleView/resources_rc.py
 
 PEP8EXCLUDE=pydev,resources_rc.py,conf.py,third_party,ui
 
