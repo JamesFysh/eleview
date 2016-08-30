@@ -4,6 +4,8 @@ from qgis.core import (
     QgsCoordinateTransform, QgsPoint, QGis
 )
 
+log = QgsMessageLog.instance()
+
 
 def de_polygonize(geometry):
     if geometry.type() == QGis.Polygon:
@@ -36,7 +38,7 @@ class ElevationReader(object):
     def _retrieve_features(self):
         # Construct an MBR in which to look for vectors in the layer
         rect = QgsRectangle(self.pt1, self.pt2)
-        QgsMessageLog.logMessage(
+        log.logMessage(
             "Getting features in layer {}, intersecting rect {}".format(
                 self.layer.name(),
                 rect.toString()
@@ -49,7 +51,7 @@ class ElevationReader(object):
             f: f.geometry()
             for f in self.layer.getFeatures(QgsFeatureRequest(rect))
             }
-        QgsMessageLog.logMessage(
+        log.logMessage(
             "Got {} features".format(len(feat_geom_map)),
             level=QgsMessageLog.INFO
         )

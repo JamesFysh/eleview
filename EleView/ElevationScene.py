@@ -1,4 +1,4 @@
-from math import sqrt, atan2
+from math import sqrt
 
 from PyQt4.QtGui import (
     QPainterPath, QGraphicsScene, QPen, QBrush, QColor, QLinearGradient

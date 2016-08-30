@@ -48,6 +48,8 @@ from . import resources_rc
 from .EleView_dialogs import EleViewMainDialog
 from .EleView_display import ElevationDisplay
 
+log = QgsMessageLog.instance()
+
 
 class EleView:
     """QGIS Plugin Implementation."""
@@ -266,7 +268,7 @@ class EleView:
             self.canvas.setMapTool(self.clickTool)
 
     def handleLayerChange(self, layerName):
-        QgsMessageLog.logMessage(
+        log.logMessage(
             "Layer Name changing to {}".format(layerName),
             level=QgsMessageLog.INFO
         )
@@ -282,7 +284,7 @@ class EleView:
         self.dlg.cboxElevAttr.addItems(sorted(self.layer_attr_map.keys()))
 
     def handleCanvasClick(self, pt, btn):
-        QgsMessageLog.logMessage(
+        log.logMessage(
             "Mouse-click: {}, {}".format(pt, btn), 
             level=QgsMessageLog.INFO
         )
