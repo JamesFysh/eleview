@@ -44,6 +44,7 @@ changelog=0.1:
 
     0.4.0
     * Show fresnel zone around line-of-sight line
+    * Keep main dialog in-focus after capturing a point on the map
 
 # Tags are comma separated with spaces allowed
 tags=analysis, vector, elevation

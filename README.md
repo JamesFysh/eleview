@@ -24,9 +24,11 @@ This plugin is quite new, and there are a lot of things still to do:
 * Remove the "units are in meters" assumption - ask the user for unit of measure
 * Capturing more than two points
 * Display of captured points on the main QGIS display
+  * And a level of interactivity between the map view and elevation view
 * Place start, end point on the elevation view, rather than just showing elevation
   between first & last elevation vector encountered along the path between start,
   end points
 * Better point-capture functionality
 * Allow the elevation view to use a different scale for the horizontal axis to
   that of the vertical axis
+* Annotate the elevation view with the start, end-points
