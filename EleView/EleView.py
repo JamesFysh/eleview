@@ -69,10 +69,11 @@ class EleView:
         # Get a reference to the mapCanvas
         self.canvas = self.iface.mapCanvas()
         # And create an object to capture canvas clicks
-        self.clickTool = QgsMapToolEmitPoint(self.canvas)
-        self.previousTool = None
-        self.current_pt = None
-        self.pt1, self.pt2 = None, None
+        if self.canvas:
+            self.clickTool = QgsMapToolEmitPoint(self.canvas)
+            self.previousTool = None
+            self.current_pt = None
+            self.pt1, self.pt2 = None, None
         # Layer handling
         self.curr_layer = None
         self.layer_map = {}
@@ -175,7 +176,7 @@ class EleView:
         if self.display:
             self.display.hide()
             self.display = None
-        if self.canvas.mapTool() == self.clickTool:
+        if self.canvas.mapTool() == self.clickTool and self.previousTool:
             self.canvas.setMapTool(self.previousTool)
 
         self.settings.write(

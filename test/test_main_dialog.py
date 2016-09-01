@@ -2,6 +2,9 @@ import unittest
 
 from EleView.EleView import EleView
 
+from utilities import get_qgis_app
+QGIS_APP = get_qgis_app()
+
 
 class DummyInterface(object):
     def mapCanvas(self):
