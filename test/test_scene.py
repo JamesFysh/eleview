@@ -4,7 +4,7 @@ import unittest
 from PyQt4.QtCore import QPointF, QRectF
 from PyQt4.QtGui import QPainterPath
 
-from EleView.EleView_dialogs import EleViewDialogDisp
+from EleView.PluginDialogs import EleViewDialogDisp
 from EleView.ElevationScene import fresnel_radius, ElevationScene, PT1
 
 

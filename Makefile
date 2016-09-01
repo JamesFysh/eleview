@@ -41,8 +41,8 @@ SOURCES = \
 	EleView/ElevationReader.py \
 	EleView/ElevationScene.py \
 	EleView/EleView.py \
-	EleView/EleView_dialogs.py \
-	EleView/EleView_display.py \
+	EleView/PluginDialogs.py \
+	EleView/ElevationDisplay.py \
 	EleView/SettingsManager.py
 
 
@@ -53,13 +53,13 @@ PY_FILES = \
 	EleView/ElevationReader.py \
 	EleView/ElevationScene.py \
 	EleView/EleView.py \
-	EleView/EleView_dialogs.py \
-	EleView/EleView_display.py \
+	EleView/PluginDialogs.py \
+	EleView/ElevationDisplay.py \
 	EleView/SettingsManager.py
 
 UI_FILES = \
-	EleView/EleView_dialog_base.ui \
-	EleView/EleView_dialog_display.ui
+	EleView/main_dialog.ui \
+	EleView/elevation_dialog.ui
 
 EXTRAS = EleView/icon.png metadata.txt
 

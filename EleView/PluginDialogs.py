@@ -4,7 +4,7 @@ from PyQt4 import QtGui, uic
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'EleView_dialog_base.ui'))
+    os.path.dirname(__file__), 'main_dialog.ui'))
 
 
 class EleViewMainDialog(QtGui.QDialog, FORM_CLASS):
@@ -20,7 +20,7 @@ class EleViewMainDialog(QtGui.QDialog, FORM_CLASS):
 
 
 DISPLAY_FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'EleView_dialog_display.ui'))
+    os.path.dirname(__file__), 'elevation_dialog.ui'))
 
 
 class EleViewDialogDisp(QtGui.QDialog, DISPLAY_FORM_CLASS):

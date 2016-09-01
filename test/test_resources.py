@@ -36,7 +36,7 @@ class EleViewDialogTest(unittest.TestCase):
             os.path.dirname(__file__),
             "..",
             "EleView",
-            "EleView_dialog_base.ui"
+            "main_dialog.ui"
         )
         count = 0
         with open(filename) as fp:

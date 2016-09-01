@@ -32,5 +32,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :type iface: QgsInterface
     """
     #
-    from .EleView import EleView
-    return EleView(iface)
+    from .EleView import PluginManager
+    return PluginManager(iface)

@@ -6,7 +6,7 @@ from qgis.core import QgsMessageLog
 
 from .ElevationReader import ElevationReader
 from .ElevationScene import ElevationScene, PT1, PT2
-from .EleView_dialogs import EleViewDialogDisp
+from .PluginDialogs import EleViewDialogDisp
 
 
 log = QgsMessageLog.instance()

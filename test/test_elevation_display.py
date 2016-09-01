@@ -5,7 +5,7 @@ from qgis.core import (
     QgsPoint, QgsCoordinateReferenceSystem
 )
 
-from EleView.EleView_display import ElevationDisplay
+from EleView.ElevationDisplay import ElevationDisplay
 
 
 class TestElevationDisplayClass(unittest.TestCase):

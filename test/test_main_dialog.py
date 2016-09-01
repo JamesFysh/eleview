@@ -1,6 +1,6 @@
 import unittest
 
-from EleView.EleView import EleView
+from EleView.EleView import PluginManager
 
 from utilities import get_qgis_app
 QGIS_APP = get_qgis_app()
@@ -14,7 +14,7 @@ class DummyInterface(object):
 class TestMainDialog(unittest.TestCase):
     def setUp(self):
         self.iface = DummyInterface()
-        self.dialog = EleView(self.iface)
+        self.manager = PluginManager(self.iface)
 
     def test_basic_construction(self):
-        self.assertIsNotNone(self.dialog)
+        self.assertIsNotNone(self.manager)

@@ -27,15 +27,9 @@ from functools import partial
 from qgis.core import (
     QgsMessageLog, QgsPoint, QgsCoordinateReferenceSystem,
 )
-from qgis.gui import (
-    QgsMapToolEmitPoint
-)
-from PyQt4.QtCore import (
-    QSettings, QTranslator, qVersion, QCoreApplication, QObject, SIGNAL,
-)
-from PyQt4.QtGui import (
-    QAction, QIcon
-)
+from qgis.gui import QgsMapToolEmitPoint
+from PyQt4.QtCore import QObject, SIGNAL
+from PyQt4.QtGui import QAction, QIcon
 
 # Layers
 from processing import getVectorLayers
@@ -45,15 +39,13 @@ from processing.core.parameters import ParameterVector
 from . import resources_rc
 
 from .SettingsManager import SettingsManager, PluginSettings
-
-# Import the code for the dialog
-from .EleView_dialogs import EleViewMainDialog
-from .EleView_display import ElevationDisplay
+from .PluginDialogs import EleViewMainDialog
+from .ElevationDisplay import ElevationDisplay
 
 log = QgsMessageLog.instance()
 
 
-class EleView:
+class PluginManager(object):
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
