@@ -17,49 +17,21 @@
 # *   (at your option) any later version.								   *
 # *																		 *
 # ***************************************************************************/
-
-#################################################
-# Edit the following to match your sources lists
-#################################################
-
-
-#Add iso code for any locales you want to support here (space separated)
-# default is no locales
-# LOCALES = af
-LOCALES =
-
-# If locales are enabled, set the name of the lrelease binary on your system. If
-# you have trouble compiling the translations, you may have to specify the full path to
-# lrelease
-#LRELEASE = lrelease
-#LRELEASE = lrelease-qt4
-
-
-# translation
-SOURCES = \
-	EleView/__init__.py \
-	EleView/ElevationReader.py \
-	EleView/ElevationScene.py \
-	EleView/EleView.py \
-	EleView/PluginDialogs.py \
-	EleView/ElevationDisplay.py \
-	EleView/SettingsManager.py
-
-
 PLUGINNAME = EleView
 
 PY_FILES = \
 	EleView/__init__.py \
+        EleView/CanvasManager.py \
+        EleView/Constants.py \
+	EleView/ElevationDisplay.py \
 	EleView/ElevationReader.py \
 	EleView/ElevationScene.py \
 	EleView/EleView.py \
+        EleView/LayerManager.py \
 	EleView/PluginDialogs.py \
-	EleView/ElevationDisplay.py \
 	EleView/SettingsManager.py
 
-UI_FILES = \
-	EleView/main_dialog.ui \
-	EleView/elevation_dialog.ui
+UI_FILES = EleView/main_dialog.ui EleView/elevation_dialog.ui
 
 EXTRAS = EleView/icon.png metadata.txt
 

@@ -6,10 +6,7 @@ from PyQt4.QtGui import (
 from PyQt4.QtCore import Qt, QPointF, QLineF, QRectF
 from PyQt4.QtGui import QTransform
 
-ZOOM_IN_FACTOR = 1.25
-ZOOM_OUT_FACTOR = 1 / ZOOM_IN_FACTOR
-PT1, PT2 = "first point", "second point"
-gpen, rpen = QPen(Qt.green, 1), QPen(Qt.red, 1)
+from .Constants import PT1, PT2, RPEN, GPEN, ZOOM_IN_FACTOR, ZOOM_OUT_FACTOR
 
 
 def fresnel_radius(distance_meters, frequency_mhz):
@@ -115,7 +112,7 @@ class ElevationScene(object):
 
         # Colour the line & zone as appropriate
         for item in (self.line, self.zone):
-            item.setPen(rpen if item.collidesWithItem(self.path) else gpen)
+            item.setPen(RPEN if item.collidesWithItem(self.path) else GPEN)
 
         # Show/hide the fresnel zone as requested
         self.zone.setVisible(self.fresnel_visible)

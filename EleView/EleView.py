@@ -24,20 +24,17 @@
 import os.path
 from functools import partial
 
-from qgis.core import (
-    QgsMessageLog, QgsPoint, QgsCoordinateReferenceSystem,
-)
-from qgis.gui import QgsMapToolEmitPoint
 from PyQt4.QtCore import QObject, SIGNAL
 from PyQt4.QtGui import QAction, QIcon
 
-# Layers
-from processing import getVectorLayers
-from processing.core.parameters import ParameterVector
+from qgis.core import QgsMessageLog, QgsCoordinateReferenceSystem
 
 # Initialize Qt resources from file resources.py
 from . import resources_rc
 
+from .CanvasManager import CanvasManager
+from .Constants import PT1, PT2
+from .LayerManager import LayerManager
 from .SettingsManager import SettingsManager, PluginSettings
 from .PluginDialogs import EleViewMainDialog
 from .ElevationDisplay import ElevationDisplay
@@ -56,25 +53,12 @@ class PluginManager(object):
             application at run time.
         :type iface: QgsInterface
         """
-        # Save reference to the QGIS interface
         self.iface = iface
-        # Get a reference to the mapCanvas
-        self.canvas = self.iface.mapCanvas()
-        # And create an object to capture canvas clicks
-        if self.canvas:
-            self.clickTool = QgsMapToolEmitPoint(self.canvas)
-            self.previousTool = None
-            self.current_pt = None
-            self.pt1, self.pt2 = None, None
-        # Layer handling
-        self.curr_layer = None
-        self.layer_map = {}
-        self.layer_attr_map = {}
-        # Settings handling
+        self.points = {PT1: None, PT2: None}
+
+        self.canvas_mgr = CanvasManager(iface.mapCanvas(), self.set_pt)
+        self.layer_mgr = LayerManager()
         self.settings = SettingsManager()
-        # initialize plugin directory
-        self.plugin_dir = os.path.dirname(__file__)
-        # initialize locale
 
         # Create the dialog (after translation) and keep reference
         self.dlg = EleViewMainDialog()
@@ -122,7 +106,6 @@ class PluginManager(object):
 
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
-
         icon_path = ':/plugins/EleView/icon.png'
         # Add menu item
         self.add_action(
@@ -131,21 +114,18 @@ class PluginManager(object):
             callback=self.run,
             parent=self.iface.mainWindow())
 
+        self.canvas_mgr.initialize()
+
         for widget, signal, method in (
-            (
-                self.clickTool,
-                "canvasClicked(const QgsPoint &, Qt::MouseButton)",
-                self.canvas_clicked
-            ),
             (
                 self.dlg.capturePoint1,
                 "clicked()",
-                partial(self.enable_capture, self.dlg.point1)
+                partial(self.canvas_mgr.enable_capture, PT1)
             ),
             (
                 self.dlg.capturePoint2,
                 "clicked()",
-                partial(self.enable_capture, self.dlg.point2)
+                partial(self.canvas_mgr.enable_capture, PT2)
             ),
             (
                 self.dlg.cboxElevLayer,
@@ -168,8 +148,7 @@ class PluginManager(object):
         if self.display:
             self.display.hide()
             self.display = None
-        if self.canvas.mapTool() == self.clickTool and self.previousTool:
-            self.canvas.setMapTool(self.previousTool)
+        self.canvas_mgr.cleanup()
 
         self.settings.write(
             PluginSettings(
@@ -188,12 +167,10 @@ class PluginManager(object):
 
     def run(self):
         """Run method that performs all the real work"""
+        self.layer_mgr.initialize()
+
         # Populate layer map, dialog 'cboxElevLayer' with layer list
-        self.layer_map = {
-            str(layer.name()): layer
-            for layer in getVectorLayers([ParameterVector.VECTOR_TYPE_LINE])
-        }
-        self.dlg.cboxElevLayer.addItems(sorted(self.layer_map.keys()))
+        self.dlg.cboxElevLayer.addItems(self.layer_mgr.get_layer_names())
 
         # Attempt to load settings
         plugin_settings = self.settings.read()
@@ -216,54 +193,39 @@ class PluginManager(object):
         # Clean up, after the tool closes
         self.cleanup()
 
-    def enable_capture(self, which_pt):
-        self.current_pt = which_pt
-        if self.canvas.mapTool() is not self.clickTool:
-            self.previousTool = self.canvas.mapTool()
-            self.canvas.setMapTool(self.clickTool)
-
     def layer_selection_changed(self, layer_name):
         log.logMessage(
-            "Layer Name changing to {}".format(layer_name),
+            "Selected layer changed to {}".format(layer_name),
             level=QgsMessageLog.INFO
         )
-        # Build layer-attribute list
-        self.curr_layer = self.layer_map[layer_name]
-        field_list = self.curr_layer.pendingFields()
-        self.layer_attr_map = {
-            str(field.name()): field
-            for field in field_list
-        }
+
         # Update layer-attribute list
         self.dlg.cboxElevAttr.clear()
-        self.dlg.cboxElevAttr.addItems(sorted(self.layer_attr_map.keys()))
+        self.dlg.cboxElevAttr.addItems(
+            self.layer_mgr.get_attrs_for_layer(layer_name)
+        )
 
-    def canvas_clicked(self, pt, btn):
-        log.logMessage(
-            "Mouse-click: {}, {}".format(pt, btn),
-            level=QgsMessageLog.INFO
-        )
-        setattr(
-            self,
-            {
-                self.dlg.point1: "pt1",
-                self.dlg.point2: "pt2"
-            }[self.current_pt],
-            QgsPoint(pt)
-        )
-        self.current_pt.setText(str(pt))
+    def set_pt(self, point, value):
+        self.points[point] = value
+        {
+            PT1: self.dlg.point1,
+            PT2: self.dlg.point2,
+        }.get(point).setText(str(value))
         self.dlg.raise_()
-        
-        if all(x is not None for x in [self.pt1, self.pt2]):
+
+        if all(x is not None for x in self.points.values()):
             self.dlg.btnShowElevation.setEnabled(True)
 
     def show_elevation_dialog(self):
+        current_layer = self.layer_mgr.get_layer_by_name(
+            self.dlg.cboxElevLayer.currentText()
+        )
         self.display = ElevationDisplay(
-            self.pt1,
-            self.pt2,
-            self.curr_layer,
+            self.points[PT1],
+            self.points[PT2],
+            current_layer,
             self.dlg.cboxElevAttr.currentText(),
-            self.canvas.mapSettings().destinationCrs(),
+            self.canvas_mgr.get_canvas_crs(),
             self.dlg.cboxElevProj.crs()
         )
         self.display.show()
