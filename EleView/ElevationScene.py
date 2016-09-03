@@ -1,10 +1,10 @@
 from math import sqrt
 
-from PyQt4.QtGui import (
-    QPainterPath, QGraphicsScene, QPen, QBrush, QColor, QLinearGradient
-)
 from PyQt4.QtCore import Qt, QPointF, QLineF, QRectF
-from PyQt4.QtGui import QTransform
+from PyQt4.QtGui import (
+    QPainterPath, QGraphicsScene, QPen, QBrush, QColor, QLinearGradient,
+    QTransform
+)
 
 from .Constants import PT1, PT2, RPEN, GPEN, ZOOM_IN_FACTOR, ZOOM_OUT_FACTOR
 
@@ -125,10 +125,8 @@ class ElevationScene(object):
         zoom_factor = ZOOM_IN_FACTOR if delta > 0 else ZOOM_OUT_FACTOR
         self.view.scale(zoom_factor, zoom_factor)
 
-        # Get the new position
+        # Translate scene such that zoom appears to center on mouse pointer pos
         new_pos = self.view.mapToScene(pos)
-
-        # Move scene to old position
         delta = new_pos - old_pos
         self.view.translate(delta.x(), delta.y())
 

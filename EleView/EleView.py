@@ -1,27 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-/***************************************************************************
- EleView
-                                 A QGIS plugin
- Allows easy extrapolation from a vector elevation layer to determine the
- elevation between two points
-                              -------------------
-        begin                : 2015-04-05
-        git sha              : $Format:%H$
-        copyright            : (C) 2015 by -
-        email                : james.fysh@gmail.com
- ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
-"""
-import os.path
 from functools import partial
 
 from PyQt4.QtCore import QObject, SIGNAL
@@ -73,33 +50,14 @@ class PluginManager(object):
         icon_path,
         text,
         callback,
-        enabled_flag=True,
-        add_to_menu=True,
-        add_to_toolbar=False,
-        status_tip=None,
-        whats_this=None,
         parent=None
     ):
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
-        action.setEnabled(enabled_flag)
-
-        if status_tip is not None:
-            action.setStatusTip(status_tip)
-
-        if whats_this is not None:
-            action.setWhatsThis(whats_this)
-
-        if add_to_toolbar:
-            self.toolbar.addAction(action)
-
-        if add_to_menu:
-            self.iface.addPluginToMenu(
-                self.menu,
-                action)
+        action.setEnabled(True)
+        self.iface.addPluginToMenu(self.menu, action)
         self.iface.addToolBarIcon(action)
-
         self.actions.append(action)
 
         return action
@@ -185,8 +143,8 @@ class PluginManager(object):
                 QgsCoordinateReferenceSystem(plugin_settings.proj_wkt)
             )
 
-        # show the dialog
         self.dlg.show()
+
         # Run the dialog event loop
         self.dlg.exec_()
 
