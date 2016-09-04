@@ -4,7 +4,6 @@ from processing.core.parameters import ParameterVector
 
 class LayerManager(object):
     def __init__(self):
-        self.curr_layer = None
         self.layer_map = {}
         self.layer_attr_map = {}
 
