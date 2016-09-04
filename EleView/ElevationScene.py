@@ -7,6 +7,7 @@ from PyQt4.QtGui import (
 )
 
 from .Constants import PT1, PT2, RPEN, GPEN, ZOOM_IN_FACTOR, ZOOM_OUT_FACTOR
+from .ElevationPath import ElevationPath
 
 
 def fresnel_radius(distance_meters, frequency_mhz):
