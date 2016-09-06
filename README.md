@@ -19,6 +19,10 @@ of highly directional WiFi gear (http://melbourne.wireless.org.au/).  I was
 interested in understanding the terrain cross-section between two radio sites,
 particularly how good the line-of-sight would be.
 
+Please feel free to leave any feedback (issues, requests for functionality, ...)
+as issues on github.  I'm working through the TODO list below, but I am just as
+happy to implement functionality that others might find useful.
+
 ##### TODO
 This plugin is quite new, and there are a lot of things still to do:
 * Remove the "units are in meters" assumption - ask the user for unit of measure
