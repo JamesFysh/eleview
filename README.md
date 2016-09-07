@@ -35,3 +35,4 @@ This plugin is quite new, and there are a lot of things still to do:
 * Allow the elevation view to use a different scale for the horizontal axis to
   that of the vertical axis
 * Annotate the elevation view with the start, end-points
+* Consider the curvature of the earth, when testing for line-of-sight
