@@ -21,13 +21,13 @@ PLUGINNAME = EleView
 
 PY_FILES = \
 	EleView/__init__.py \
-        EleView/CanvasManager.py \
-        EleView/Constants.py \
+	EleView/CanvasManager.py \
+	EleView/Constants.py \
 	EleView/ElevationDisplay.py \
 	EleView/ElevationReader.py \
 	EleView/ElevationScene.py \
 	EleView/EleView.py \
-        EleView/LayerManager.py \
+	EleView/LayerManager.py \
 	EleView/PluginDialogs.py \
 	EleView/SettingsManager.py
 
